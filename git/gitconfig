@@ -1,0 +1,12 @@
+[core]
+	editor = emacs
+	excludesfile = ~/.gitignore
+[user]
+	email = alexcu@me.com
+	name = Alex Cummaudo
+[push]
+	default = matching
+[branch]
+	autosetuprebase = always
+[pull]
+	rebase = true

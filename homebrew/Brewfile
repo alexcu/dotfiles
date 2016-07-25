@@ -1,0 +1,47 @@
+# Cask tap
+tap 'caskroom/cask'
+
+# Shells
+brew 'zsh'
+
+# Tools
+brew 'git'
+brew 'pandoc'
+brew 'tree'
+brew 'screenbrightness'
+brew 'heroku-toolbelt'
+
+# Languages
+brew 'fpc'
+brew 'node'
+brew 'rbenv'
+brew 'ruby-build'
+
+# Docker
+brew 'docker'
+brew 'docker-compose'
+brew 'docker-machine'
+
+# Basic software
+cask 'dropbox'
+cask 'flux'
+cask 'slack'
+cask 'flash'
+cask 'evernote'
+cask 'vlc'
+cask 'mac2imgur'
+
+# Virtual Machine
+cask 'vmware-fusion'
+cask 'virtualbox'
+
+# Browsers
+cask 'google-chrome'
+cask 'firefox'
+
+# Editors
+cask 'mou'
+cask 'atom'
+
+# Fun
+brew 'fortune'
