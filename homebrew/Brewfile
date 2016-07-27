@@ -42,6 +42,7 @@ cask 'firefox'
 # Editors
 cask 'mou'
 cask 'atom'
+cask 'sketch'
 
 # Fun
 brew 'fortune'
