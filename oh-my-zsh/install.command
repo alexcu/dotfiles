@@ -19,5 +19,6 @@ echo "Linking:"
 echo "  ./zshrc_antigen.sh -> ~/.zshrc"
 echo "  ./zshrc_custom.sh  -> ~/.zshrc_custom"
 BASEDIR=$(dirname "$0")
+rm -f ~/.zshrc
 ln -s "$BASEDIR/zshrc_antigen.sh" ~/.zshrc
 ln -s "$BASEDIR/zshrc_custom.sh" ~/.zshrc_custom
