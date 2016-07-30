@@ -18,6 +18,6 @@ git clone https://github.com/zsh-users/antigen.git ~/.antigen
 echo "Linking:"
 echo "  ./zshrc_antigen.sh -> ~/.zshrc"
 echo "  ./zshrc_custom.sh  -> ~/.zshrc_custom"
-BASEDIR=$(dirname "$0")
+BASEDIR=$(greadlink -f $(dirname $0))
 ln -nsf "$BASEDIR/zshrc_antigen.sh" ~/.zshrc
 ln -nsf "$BASEDIR/zshrc_custom.sh" ~/.zshrc_custom

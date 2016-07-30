@@ -5,6 +5,7 @@ tap 'caskroom/cask'
 brew 'zsh'
 
 # Tools
+brew 'coreutils'
 brew 'git'
 brew 'pandoc'
 brew 'tree'
