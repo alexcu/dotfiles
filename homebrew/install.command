@@ -9,7 +9,7 @@ echo "Installed Homebrew Bundle!"
 
 echo "Linking ./Brewfile -> ~/.Brewfile..."
 BASEDIR=$(dirname "$0")
-ln -s "$BASEDIR/Brewfile" ~/.Brewfile
+ln -nsf "$BASEDIR/Brewfile" ~/.Brewfile
 echo "Set up ~/.Brewfile!"
 
 echo "Installing [cask] apps from ~/.Brewfile..."
