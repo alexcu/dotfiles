@@ -18,6 +18,7 @@ antigen bundles <<EOBUNDLES
   osx
   brew
   zsh-users/zsh-syntax-highlighting
+  z
 EOBUNDLES
 
 # Theme
