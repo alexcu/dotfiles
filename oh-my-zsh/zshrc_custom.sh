@@ -52,5 +52,6 @@ alias sleepdisplay="pmset displaysleepnow"
 # User configuration
 eval "$(/usr/libexec/path_helper -s)"
 
-# Initialise rbenv
+# Initialise rbenv + pyenv
 eval "$(rbenv init -)"
+eval "$(pyenv init -)"
