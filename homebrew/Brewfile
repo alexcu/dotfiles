@@ -27,10 +27,12 @@ brew 'docker-machine'
 cask 'dropbox'
 cask 'flux'
 cask 'slack'
+cask 'messenger-for-desktop'
 cask 'flash'
 cask 'evernote'
 cask 'vlc'
 cask 'mac2imgur'
+cask 'mendeley-desktop'
 
 # Virtual Machine
 cask 'vmware-fusion'
@@ -41,8 +43,7 @@ cask 'google-chrome'
 cask 'firefox'
 
 # Editors
-cask 'mou'
-cask 'atom'
+cask 'visual-studio-code'
 cask 'sketch'
 
 # Fun
