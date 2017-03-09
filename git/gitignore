@@ -169,3 +169,6 @@ obj/
 fp.ini
 fp.cfg
 fp.dsk
+
+### VS Code ###
+.vscode/
