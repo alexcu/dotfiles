@@ -39,6 +39,7 @@ alias dfire-web="cd ~/repos/doubtfire/doubtfire-web"
 
 # Apps
 alias color="osascript '/Users/Alex/Library/Mobile Documents/com~apple~ScriptEditor2/Documents/ColorPicker.scpt'"
+alias texpad="open -a Texpad"
 
 # Service Shortcuts
 alias cpwd="pwd | pbcopy"
