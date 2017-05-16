@@ -1,0 +1,1 @@
+Make sure to run these whilst `cd`'ed into the respective directories!
