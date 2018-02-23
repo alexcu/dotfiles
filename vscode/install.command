@@ -1,6 +1,7 @@
-#!/usr/bin/env bash
-echo "Linking:"
-echo "  ~/Dropbox/Apps/vscode -> ~/.vscode"
-echo "  ~/Dropbox/Apps/vscode_application_support -> ~/Library/Application Support/Code"
-ln -nsf "~/Dropbox/Apps/vscode" ~/.vscode
-ln -nsf "~/Dropbox/Apps/vscode_application_support" ~/Library/Application\ Support/Code
+#!/bin/sh
+echo "Linking ./../vscode -> ~/.vscode..."
+echo "Linking ./../vscode_application_support -> ~/Library/Application\ Support/Code"
+BASEDIR=$(greadlink -f $(dirname $0))
+ln -nsf "$BASEDIR/../../vscode" ~/.vscode
+ln -nsf "$BASEDIR/../../vscode_application_support" ~/Library/Application\ Support/Code
+

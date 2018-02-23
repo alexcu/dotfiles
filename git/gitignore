@@ -172,3 +172,6 @@ fp.dsk
 
 ### VS Code ###
 .vscode/
+
+### Texpad ###
+.texpadtmp/

@@ -5,6 +5,10 @@ else
   export EDITOR='emacs'
 fi
 
+# Prefer /usr/local/bin over /usr/bin for brew installs
+export PATH=/usr/local/bin:$PATH
+export PATH="$HOME/.jenv/bin:$PATH"
+
 #
 # Functions
 #
@@ -14,6 +18,9 @@ vnc() { open vnc://$1 }
 
 # List my repos
 repos() { cd ~/repos/$1; ls }
+
+# CD to Desktop
+cdd() { cd ~/Desktop }
 
 # Ssh via back to my mac (btmm)
 btmm_account_no()
@@ -53,6 +60,14 @@ alias sleepdisplay="pmset displaysleepnow"
 # User configuration
 eval "$(/usr/libexec/path_helper -s)"
 
-# Initialise rbenv + pyenv
+# Initialise rbenv + pyenv + jenv
 eval "$(rbenv init -)"
 eval "$(pyenv init -)"
+eval "$(jenv init -)"
+
+export PATH="/usr/local/opt/sqlite/bin:$PATH"
+
+# Maestro
+export PATH=$PATH:/opt/maestro/bin
+export MAESTRO_PATH=/opt/maestro
+export MANPATH=/usr/local/opt/coreutils/libexec/gnuman

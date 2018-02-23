@@ -25,6 +25,7 @@ brew 'docker-machine'
 
 # Basic software
 cask 'dropbox'
+cask 'macdown'
 cask 'flux'
 cask 'slack'
 cask 'messenger-for-desktop'

@@ -6,7 +6,7 @@
 	name = Alex Cummaudo
 [push]
 	default = matching
-[branch]
-	autosetuprebase = always
-[pull]
-	rebase = true
+#[branch]
+#	autosetuprebase = always
+#[pull]
+#	rebase = true
