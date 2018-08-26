@@ -9,43 +9,23 @@ brew 'coreutils'
 brew 'git'
 brew 'pandoc'
 brew 'tree'
-brew 'screenbrightness'
 brew 'heroku-toolbelt'
 
-# Languages
-brew 'fpc'
-brew 'node'
+# Development
 brew 'rbenv'
+brew 'pyenv'
 brew 'ruby-build'
 
-# Docker
-brew 'docker'
-brew 'docker-compose'
-brew 'docker-machine'
-
-# Basic software
-cask 'dropbox'
+# Software
+cask 'google-backup-and-sync'
 cask 'macdown'
 cask 'flux'
 cask 'slack'
-cask 'messenger-for-desktop'
-cask 'flash'
-cask 'evernote'
 cask 'vlc'
 cask 'mac2imgur'
-cask 'mendeley-desktop'
-
-# Virtual Machine
-cask 'vmware-fusion'
-cask 'virtualbox'
-
-# Browsers
+cask 'papers'
+cask 'microsoft-office'
 cask 'google-chrome'
 cask 'firefox'
-
-# Editors
 cask 'visual-studio-code'
 cask 'sketch'
-
-# Fun
-brew 'fortune'
