@@ -63,11 +63,6 @@ eval "$(/usr/libexec/path_helper -s)"
 # Initialise rbenv + pyenv + jenv
 eval "$(rbenv init -)"
 eval "$(pyenv init -)"
-eval "$(jenv init -)"
+#eval "$(jenv init -)"
 
 export PATH="/usr/local/opt/sqlite/bin:$PATH"
-
-# Maestro
-export PATH=$PATH:/opt/maestro/bin
-export MAESTRO_PATH=/opt/maestro
-export MANPATH=/usr/local/opt/coreutils/libexec/gnuman
