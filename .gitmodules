@@ -1,0 +1,3 @@
+[submodule "latex/gpreambles"]
+	path = latex/gpreambles
+	url = git@github.com:alexcu/latex-preambles.git
