@@ -43,6 +43,10 @@ alias zshconfig="emacs ~/.zshrc"
 # Repositories
 alias dfire-api="cd ~/repos/doubtfire/doubtfire-api"
 alias dfire-web="cd ~/repos/doubtfire/doubtfire-web"
+alias phd="cd ~/PhD"
+alias phdtex="cd ~/PhD/LaTeX"
+alias phdexp="cd ~/PhD/Experiments"
+
 
 # Apps
 alias color="osascript '/Users/Alex/Library/Mobile Documents/com~apple~ScriptEditor2/Documents/ColorPicker.scpt'"
