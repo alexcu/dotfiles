@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+year=$(date +"%Y")
+month=$(date +"%m")
+trimester=$( (($month <= 6)) && echo 1 || echo 2 )
+
+read -p "[Toggl Project]:  $year/T$trimester/SIT[XXX]: " unit
+unit=${unit:-XXX}
+toggl_project="$year/T$trimester/SIT$unit"
+read -p "[$toggl_project]:  Press enter to start marking..."
+toggl start -w Teaching -o "$toggl_project" Marking
+open https://ontrack.deakin.edu.au/
+read -p "[$toggl_project]:  Press enter to stop marking..."
+toggl now
+toggl stop
+echo "[OnTrack]:  Yay. Go have a wine."

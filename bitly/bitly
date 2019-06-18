@@ -1,0 +1,12 @@
+#/usr/bin/env bash
+bearer=$(cat ~/.bitlytoken)
+link=$(curl -s -X POST \
+ https://api-ssl.bitly.com/v4/bitlinks \
+ -H "Authorization: Bearer $bearer" \
+ -H 'Content-Type: application/json' \
+ -d "{
+ \"group_guid\": \"Bb8u8JHuuwo\",
+ \"long_url\": \"$1\"
+}" | sed -E "s/^.+link\":\"([^\"]+).+$/\1/")
+echo $link | pbcopy
+echo $link has been copied to the keyboard
