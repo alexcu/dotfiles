@@ -30,3 +30,4 @@ source ~/.zshrc_custom
 # Done
 antigen apply
 export PATH="/Users/Alex/.splashkit:$PATH"
+export PATH="/Users/Alex/.splashkit:$PATH"
