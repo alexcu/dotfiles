@@ -67,6 +67,6 @@ eval "$(/usr/libexec/path_helper -s)"
 # Initialise rbenv + pyenv + jenv
 eval "$(rbenv init -)"
 eval "$(pyenv init -)"
-#eval "$(jenv init -)"
 
 export PATH="/usr/local/opt/sqlite/bin:$PATH"
+export HOMEBREW_AUTO_UPDATE_SECS=3600

@@ -31,3 +31,4 @@ source ~/.zshrc_custom
 antigen apply
 export PATH="/Users/Alex/.splashkit:$PATH"
 export PATH="/Users/Alex/.splashkit:$PATH"
+export PATH="/Users/Alex/.splashkit:$PATH"
