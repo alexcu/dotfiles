@@ -21,3 +21,4 @@ echo "  ./zshrc_custom.sh  -> ~/.zshrc_custom"
 BASEDIR=$(greadlink -f $(dirname $0))
 ln -nsf "$BASEDIR/zshrc_antigen.sh" ~/.zshrc
 ln -nsf "$BASEDIR/zshrc_custom.sh" ~/.zshrc_custom
+ln -nsf "$BASEDIR/p10k.zsh" ~/.p10k.zsh

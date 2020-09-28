@@ -1,34 +1,25 @@
+source ~/.zshrc_custom              # Apply custom zshrc stuff
+unset zle_bracketed_paste           # Allow drag and drop
+MAILCHECK=0                         # Don't tell me 'you have mail'
+DISABLE_AUTO_TITLE="true"           # Disable auto-setting terminal title
+COMPLETION_WAITING_DOTS="true"      # Display dots when waiting for completion
+HOMEBREW_AUTO_UPDATE_SECS="604800"  # Only update weekly
+
+# Enable Powerlevel10k instant prompt.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
+# Antigen
 source ~/.antigen/antigen.zsh
-
-# Allow drag and drop
-unset zle_bracketed_paste
-# Don't tell me 'you have mail'
-MAILCHECK=0
-# Disable auto-setting terminal title
-DISABLE_AUTO_TITLE="true"
-# Display red dots whilst waiting for completion
-COMPLETION_WAITING_DOTS="true"
-
-# Load the oh-my-zsh's library
 antigen use oh-my-zsh
-
-# Bundles
-antigen bundles <<EOBUNDLES
-  git
-  osx
-  brew
-  zsh-users/zsh-syntax-highlighting
-  z
-EOBUNDLES
-
-# Theme
-antigen theme sorin
-
-# Custom
-source ~/.zshrc_custom
-
-# Done
+antigen bundle git
+antigen bundle osx
+antigen bundle brew
+antigen bundle zsh-users/zsh-syntax-highlighting
+antigen bundle z
+antigen theme romkatv/powerlevel10k
 antigen apply
-export PATH="/Users/Alex/.splashkit:$PATH"
-export PATH="/Users/Alex/.splashkit:$PATH"
-export PATH="/Users/Alex/.splashkit:$PATH"
+
+# Apply p10k.zsh rules
+source ~/.p10k.zsh

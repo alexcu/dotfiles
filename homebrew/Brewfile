@@ -1,5 +1,6 @@
 # Cask tap
 tap 'caskroom/cask'
+tap 'teamookla/speedtest'
 
 # Shells
 brew 'zsh'
@@ -9,6 +10,7 @@ brew 'coreutils'
 brew 'git'
 brew 'pandoc'
 brew 'tree'
+brew 'blueutil'
 
 # Development
 brew 'rbenv'
@@ -28,6 +30,7 @@ cask 'mactex-no-gui'
 cask 'macdown'
 cask 'vlc'
 cask 'mac2imgur'
+cask 'imageoptim'
 cask 'papers'
 cask 'firefox'
 cask 'fluid'
@@ -36,3 +39,4 @@ cask '1password'
 cask 'mendeley'
 cask 'itsycal'
 cask 'tiles'
+cask 'speedtest'
