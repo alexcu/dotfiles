@@ -1,0 +1,22 @@
+#!/usr/bin/env sh
+
+# To remove AnyConnect GUI, run:
+# $  sudo mv /Applications/Cisco/Cisco\ AnyConnect\ Secure\ Mobility\ Client.app/Contents/MacOS/Cisco\ AnyConnect\ Secure\ Mobility\ Client /Applications/Cisco/Cisco\ AnyConnect\ Secure\ Mobility\ Client.app/Contents/MacOS/Cisco\ AnyConnect\ Secure\ Mobility\ Client.old
+
+server="vpn.deakin.edu.au/encrypted"
+export PATH="/opt/cisco/anyconnect/bin:$PATH"
+
+trap disconnect SIGINT SIGTERM
+disconnect() {
+  printf $'\033[K\nVPN Disconnecting...\n'
+  vpn disconnect $server
+  exit 0
+}
+
+vpn connect $server || exit 1
+echo "VPN Connected. Ctrl+C to disconnect\n"
+
+while [ 1 ]; do
+  vpn stats | sed -n "13,22p"
+  printf $'\033[10A';
+done
