@@ -9,8 +9,14 @@ export PATH="/usr/local/opt/sqlite/bin:$PATH"
 
 # Aliases & Functions
 vnc() { open vnc://$1 }
+call() { ~/.dotfiles/call $1 }
+facetime() { open facetime://$1 }
+alias sed="gsed"
+alias vm="ssh vm"
 alias vpn="~/.dotfiles/vpn"
+alias cdu="cd .."
 alias cdd="cd ~/Desktop"
+alias cdl="cd ~/Downloads"
 alias zshconfig="emacs ~/.zshrc"
 alias cpwd="pwd | pbcopy"
 alias lock="/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resources/CGSession -suspend"

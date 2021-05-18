@@ -1,6 +1,6 @@
 source ~/.zshrc_custom              # Apply custom zshrc stuff
 unset zle_bracketed_paste           # Allow drag and drop
-MAILCHECK=0                         # Don't tell me 'you have mail'
+unset MAILCHECK                     # Do not check mail
 DISABLE_AUTO_TITLE="true"           # Disable auto-setting terminal title
 COMPLETION_WAITING_DOTS="true"      # Display dots when waiting for completion
 HOMEBREW_AUTO_UPDATE_SECS="604800"  # Only update weekly
