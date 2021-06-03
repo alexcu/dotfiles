@@ -11,4 +11,4 @@
 #[pull]
 #	rebase = true
 [pull]
-	rebase = false
+	rebase = true
