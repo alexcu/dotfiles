@@ -37,4 +37,4 @@ intel() { arch -x86_64 $1 }
 
 # Homebrew on M1 - iBrew for Rosetta Brew
 export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
-alias ibrew='arch -x86_64 /usr/local/bin/brew'B
+alias ibrew='arch -x86_64 /usr/local/bin/brew'
