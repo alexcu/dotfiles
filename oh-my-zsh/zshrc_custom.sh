@@ -24,5 +24,17 @@ alias sleepdisplay="pmset displaysleepnow"
 
 # Initialise rbenv + pyenv + jenv
 if [ -x "$(command -v rbenv)" ]; then eval "$(rbenv init -)"; fi
-if [ -x "$(command -v pyenv)" ]; then eval "$(pyenv init -)"; fi
+if [ -x "$(command -v pyenv)" ]; then eval "$(pyenv init --path)"; fi
 if [ -x "$(command -v jenv)"  ]; then eval "$(jenv init -)"; fi
+
+# Don't auto-update Brew, instead use brewautoupate
+# See https://apple.stackexchange.com/a/353010
+export HOMEBREW_NO_AUTO_UPDATE=1
+
+# Architecture Changes
+m1() { arch -arm64 $1 }
+intel() { arch -x86_64 $1 }
+
+# Homebrew on M1 - iBrew for Rosetta Brew
+export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+alias ibrew='arch -x86_64 /usr/local/bin/brew'B

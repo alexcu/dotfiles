@@ -1,4 +1,5 @@
 source ~/.zshrc_custom              # Apply custom zshrc stuff
+
 unset zle_bracketed_paste           # Allow drag and drop
 unset MAILCHECK                     # Do not check mail
 DISABLE_AUTO_TITLE="true"           # Disable auto-setting terminal title
@@ -12,6 +13,11 @@ fi
 
 # Antigen
 source ~/.antigen/antigen.zsh
+
+# Apply Docker incl. antigen plugins
+source ~/.zshrc_docker
+
+# Antigen plugins
 antigen use oh-my-zsh
 antigen bundle git
 antigen bundle osx
@@ -23,3 +29,6 @@ antigen apply
 
 # Apply p10k.zsh rules
 source ~/.p10k.zsh
+
+# REA stuff
+. "$HOME/.rea-cli/rea-shell-init.sh"
