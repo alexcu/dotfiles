@@ -1,0 +1,87 @@
+Cursor Commands                                        C=Ctrl    M=Alt
+---
+C-f     char  *F*orward
+C-b     char  *B*ackward
+M-f     word  *F*orward
+M-b     word  *B*ackward
+
+C-n     line  *N*ext
+C-p     line  *P*rev
+C-a     line  st*A*rt
+C-e     line  *E*nd
+M-a     sntc  st*A*rt
+M-e     stnc  *E*nd
+
+M-<     docu  start
+M->     docu  end
+
+C-l     *L*ine centre
+
+
+Kill (Cut) & Yank (Paste)
+---
+<DEL>   char  prev  del
+C-d     char  next  del
+M-<DEL> word  prev  del
+M-D     word  next  del
+
+C-k     line  *K*ill
+M-k     stnc  *K*ill
+C-w     regi  kill
+
+C-y           *Y*ank
+M-y     prev  *Y*ank
+
+
+Region
+---
+C-SPC   regi  mark
+C-w     regi  kill
+
+
+Search
+---
+C-s     srch  forw
+C-r     srch  back
+
+
+Transposing
+---
+M-c     word  *C*apitalise
+M-u     word  *U*ppercase
+M-l     word  *L*owercase
+
+
+Buffers
+---
+C-x b   buff switch
+C-x C-b buff list
+C-x C-s buff save
+C-x s   buff save some
+
+
+Windows
+---
+C-x 0   wind  delete
+C-x 1   wind  one
+C-x 2   wind  split
+
+C-x o   wind  *O*ther  cycle
+M C-v   wind  other    scroll
+
+C-x ^   wind  enlarge
+M-x     wind  shrink
+
+
+Special
+---
+C-x C-f file find
+C-u NC  repeat C N times
+C-g     *G*et me out
+C-_     undo
+C-x C-c quit
+
+
+Help
+---
+C-h k   help *K*eystroke
