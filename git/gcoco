@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby
+require 'readline'
+
+message = Readline.readline('[Commit msg]: ').chomp
+authors = Readline.readline('[Co-authors]: ').chomp.split(',')
+
+full_message = message + authors.map do |author|
+  suffix = author == authors.first ? "\n\n" : ''
+  auth_name = author.split.map(&:capitalize).join(' ')
+  auth_email = author.downcase.split.join('.')
+  "#{suffix}Co-authored-by: #{auth_name} <#{auth_email}@rea-group.com>"
+end.join("\n")
+
+system('echo', `git commit -q -m '#{full_message}' && git commit --amend`)
