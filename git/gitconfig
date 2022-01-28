@@ -2,13 +2,16 @@
 	editor = emacs
 	excludesfile = ~/.gitignore
 [user]
-	email = alexcu@me.com
+	email = alex.cummaudo@rea-group.com
 	name = Alex Cummaudo
 [push]
 	default = matching
-#[branch]
-#	autosetuprebase = always
-#[pull]
-#	rebase = true
+[branch]
+	autosetuprebase = always
 [pull]
 	rebase = true
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
