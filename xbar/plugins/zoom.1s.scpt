@@ -69,4 +69,4 @@ Stack Stars Zoom Room | href=https://rea-group.zoom.us/my/stackstars
 My Personal Zoom Room | href=https://rea-group.zoom.us/my/alexcu
 ---
 Copy Stack Stars Zoomlink | shell='/Users/Alex/Library/Application Support/xbar/plugins/support/pbcopy.sh' | param1='https://rea-group.zoom.us/my/stackstars'
-Copy My Personal Zoomlink | shell='/Users/Alex/Library/Application Support/xbar/plugins/support/pbcopy.sh' | param1='https://rea-group.zoom.us/my/alexcu?pwd=aXJNdjVZbmlHRG5TVEdtdzdVNUMrUT09'"
+Copy My Personal Zoomlink | shell='/Users/Alex/Library/Application Support/xbar/plugins/support/pbcopy.sh' | param1='https://rea-group.zoom.us/my/alexcu'"

@@ -8,11 +8,20 @@ export PATH="$HOME/.jenv/bin:$PATH"
 export PATH="/usr/local/opt/sqlite/bin:$PATH"
 export PATH="$PATH:/Users/Alex/Library/Application Support/Coursier/bin"
 
+# Additional keybindings - refer to https://zsh.sourceforge.io/Guide/zshguide04.html
+bindkey "^w" kill-region
+function toggle-right-prompt() { p10k display '*/right'=hide,show; }
+zle -N toggle-right-prompt
+bindkey '^P' toggle-right-prompt
+
 # Aliases & Functions
 vnc() { open vnc://$1 }
 call() { ~/.dotfiles/call $1 }
 facetime() { open facetime://$1 }
 alias timestamp="date +%FT%H%M%S"
+alias timestampd="timestamp | sed 's/-//g'"
+alias datestamp="date +%F"
+alias datestampd="datestamp | sed 's/-//g'"
 alias vm="ssh vm"
 alias vpn="~/.dotfiles/vpn"
 alias cdu="cd .."
@@ -25,6 +34,8 @@ alias lock="/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resourc
 alias sleepdisplay="pmset displaysleepnow"
 alias ekb="less ~/iCloud/Apps/dotfiles/emacs/emacs-keybindings.txt"
 alias c="cheat"
+alias emacskb="less ~/iCloud/Apps/dotfiles/emacs/emacs-keybindings.txt"
+alias color="osascript -e 'choose color' &"
 
 # Git
 alias gweb="gh repo view -w"
@@ -37,9 +48,9 @@ function gfk() {
   git remote -v
 }
 function gpup() {
-  git pull --rebase upstream master
+  git pull --rebase upstream master || git pull --rebase upstream main
 }
-alias gcbup="gco master && gpup && gcb $1"
+alias gcbup="gco master || gco main && gpup && gcb $1"
 
 # Initialise rbenv + pyenv + jenv
 if [ -x "$(command -v rbenv)" ]; then eval "$(rbenv init -)"; fi

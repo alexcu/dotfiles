@@ -25,18 +25,26 @@ cask 'zoomus'
 cask 'google-backup-and-sync'
 cask 'google-drive-file-stream'
 
-# Software
-cask 'mactex-no-gui'
-cask 'macdown'
-cask 'vlc'
+# Menubar
 cask 'mac2imgur'
-cask 'imageoptim'
-cask 'papers'
-cask 'firefox'
-cask 'fluid'
-cask 'omnidisksweeper'
 cask '1password'
-cask 'mendeley'
 cask 'itsycal'
 cask 'tiles'
-cask 'speedtest'
+cask 'displaperture'
+cask 'hiddenbar'
+cask 'xbar'
+
+# Academic
+# cask 'mactex-no-gui'
+# cask 'papers'
+# cask 'mendeley'
+
+# Audio & Video
+cask 'vlc'
+cask 'imageoptim'
+cask 'blackhole-16ch'
+cask 'audacity'
+
+# Applications
+cask 'firefox'
+cask 'omnidisksweeper'
