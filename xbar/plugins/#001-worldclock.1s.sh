@@ -11,8 +11,8 @@
 # <xbar.desc>Display current UTC time in the menu bar, with various timezones in the drop-down menu</xbar.desc>
 # <xbar.image>https://cloud.githubusercontent.com/assets/6187908/12207887/464ff8b2-b617-11e5-9d61-787eed228552.png</xbar.image>
 
-ZONES="Australia/Sydney Europe/Amsterdam America/New_York America/Los_Angeles"
-date -u +'%H:%M:%S UTC'
+ZONES="Australia/Sydney Europe/London America/New_York America/Los_Angeles"
+echo "$(date -u +'%H:%M:%S UTC')  •  $(TZ=Europe/London date +'%H:%M:%S') LHR"
 echo '---'
 for zone in $ZONES; do
   echo "$(TZ=$zone date +'%H:%M:%S %z') $zone"

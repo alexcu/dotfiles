@@ -65,8 +65,8 @@ end if
 
 return shareState & pad2 & videoState & pad1 & muteState & "| size=13
 ---
-Stack Stars Zoom Room | href=https://rea-group.zoom.us/my/stackstars
+Data Science Zoom Room | href=https://rea-group.zoom.us/my/cxdatascience
 My Personal Zoom Room | href=https://rea-group.zoom.us/my/alexcu
 ---
-Copy Stack Stars Zoomlink | shell='/Users/Alex/Library/Application Support/xbar/plugins/support/pbcopy.sh' | param1='https://rea-group.zoom.us/my/stackstars'
+Copy Data Science Zoomlink | shell='/Users/Alex/Library/Application Support/xbar/plugins/support/pbcopy.sh' | param1='https://rea-group.zoom.us/my/cxdatascience'
 Copy My Personal Zoomlink | shell='/Users/Alex/Library/Application Support/xbar/plugins/support/pbcopy.sh' | param1='https://rea-group.zoom.us/my/alexcu'"
