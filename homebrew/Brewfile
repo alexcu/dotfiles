@@ -1,5 +1,4 @@
 # Cask tap
-tap 'caskroom/cask'
 tap 'teamookla/speedtest'
 
 # Shells
@@ -10,20 +9,22 @@ brew 'coreutils'
 brew 'git'
 brew 'pandoc'
 brew 'tree'
-brew 'blueutil'
+cask 'fig' 
+brew 'pdfgrep'
+#brew 'blueutil'
 
 # Development
+brew 'emacs'
 brew 'rbenv'
 brew 'pyenv'
 brew 'ruby-build'
 cask 'visual-studio-code'
 
 # Work + Sync
-cask 'slack'
-cask 'microsoft-outlook' # needed until new version is out
-cask 'zoomus'
-cask 'google-backup-and-sync'
-cask 'google-drive-file-stream'
+#cask 'slack'
+#cask 'microsoft-outlook' # needed until new version is out
+cask 'zoom'
+cask 'google-drive'
 
 # Menubar
 cask 'mac2imgur'
@@ -47,4 +48,6 @@ cask 'audacity'
 
 # Applications
 cask 'firefox'
-cask 'omnidisksweeper'
+cask 'notion'
+cask 'whatsapp'
+cask 'messenger'

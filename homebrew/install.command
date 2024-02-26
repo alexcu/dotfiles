@@ -1,6 +1,6 @@
 #!/bin/sh
 echo "Installing Homebrew..."
-ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 echo "Installed Homebrew!"
 
 # Need coreutils to use greadlink
