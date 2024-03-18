@@ -1,8 +1,10 @@
 # Cask tap
 tap 'teamookla/speedtest'
 
-# Shells
+# Zsh
 brew 'zsh'
+brew 'zsh-syntax-highlighting'
+brew 'powerlevel10k'
 
 # Tools
 brew 'coreutils'
