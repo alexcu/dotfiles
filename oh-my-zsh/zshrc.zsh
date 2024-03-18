@@ -13,6 +13,7 @@ export ZSH=$HOME/.oh-my-zsh
 source $ZSH/oh-my-zsh.sh
 
 # Custom Zsh Configs
+source ~/.zshrc.aliases.zsh
 source ~/.zshrc.custom.zsh
 source ~/.zshrc.docker.zsh
 source ~/.zshrc.canva.zsh
