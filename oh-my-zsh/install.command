@@ -16,13 +16,17 @@ echo "Installing antigen..."
 git clone https://github.com/zsh-users/antigen.git ~/.antigen
 
 echo "Linking:"
-echo "  ./zshrc             -> ~/.zshrc"
-echo "  ./zshrc.aliases.zsh -> ~/.zshrc.aliases.zsh"
-echo "  ./zshrc.plugins.zsh -> ~/.zshrc.plugins.zsh"
-echo "  ./zshrc.custom.zsh  -> ~/.zshrc.custom.zsh"
-echo "  ./zshrc.docker.zsh  -> ~/.zshrc.docker.zsh"
 BASEDIR=$(greadlink -f $(dirname $0))
+echo "  ./zshrc                 -> ~/.zshrc"
+echo "  ./zshrc.end.zsh -> ~/.zshrc.top.zsh"
+echo "  ./zshrc.top.zsh -> ~/.zshrc.end.zsh"
+echo "  ./zshrc.aliases.zsh     -> ~/.zshrc.aliases.zsh"
+echo "  ./zshrc.plugins.zsh     -> ~/.zshrc.plugins.zsh"
+echo "  ./zshrc.custom.zsh      -> ~/.zshrc.custom.zsh"
+echo "  ./zshrc.docker.zsh      -> ~/.zshrc.docker.zsh"
 ln -nsf "$BASEDIR/zshrc.zsh" ~/.zshrc
+ln -nsf "$BASEDIR/zshrc.top.zsh" ~/.zshrc.top.zsh
+ln -nsf "$BASEDIR/zshrc.end.zsh" ~/.zshrc.end.zsh
 ln -nsf "$BASEDIR/zshrc.plugins.zsh" ~/.zshrc.plugins.zsh
 ln -nsf "$BASEDIR/zshrc.aliases.zsh" ~/.zshrc.aliases.zsh
 ln -nsf "$BASEDIR/zshrc.custom.zsh" ~/.zshrc.custom.zsh

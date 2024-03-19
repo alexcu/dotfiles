@@ -3,15 +3,18 @@ tap 'teamookla/speedtest'
 
 # Zsh
 brew 'zsh'
+brew 'zsh-autocomplete'
+brew 'zsh-autosuggestions'
 brew 'zsh-syntax-highlighting'
 brew 'powerlevel10k'
+brew 'pygments'
 
 # Tools
 brew 'coreutils'
 brew 'git'
 brew 'pandoc'
 brew 'tree'
-cask 'fig' 
+cask 'fig'
 brew 'pdfgrep'
 #brew 'blueutil'
 

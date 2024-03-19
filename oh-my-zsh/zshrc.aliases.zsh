@@ -1,3 +1,5 @@
+#!/usr/bin/env zsh
+
 # Timestamps
 alias timestamp="date +%FT%H%M%S"
 alias timestampd="timestamp | sed 's/-//g'"
@@ -15,7 +17,7 @@ alias cdw="cd ~/repos/work"
 
 # Config edit shortcuts
 alias zshconfig="emacs ~/.zshrc"
-alias dotfiles="emacs ~/.dotfiles"
+alias dotfiles="code ~/.dotfiles"
 alias emacsconfig="emacs ~/.emacs"
 
 # Applications
@@ -26,7 +28,7 @@ alias color="osascript -e 'choose color' &"
 alias jqless="jq -C | less -R"
 
 # Git(Hub)
-alias gitpersonal="git -c user.email=alexcu@me.com $1"
+alias gper="git -c user.email=alexcu@me.com $1"
 alias gweb="gh repo view -w"
 alias ghash="git rev-parse --short HEAD"
 alias ggpushash="ggpush && ghash | pbcopy"
@@ -42,3 +44,7 @@ function gpup() {
 function gpor() {
   git pull --rebase origin master || git pull --rebase origin main
 }
+
+# Work with the *N*ewest *F*ile
+# E.g., tar xf NF; cd NF
+alias -g NF='./*(oc[1])'

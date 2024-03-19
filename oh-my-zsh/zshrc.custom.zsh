@@ -1,3 +1,5 @@
+#!/usr/bin/env zsh
+
 # Always use emacs
 export EDITOR='emacs'
 export VISUAL='emacs'
@@ -44,10 +46,22 @@ HOMEBREW_AUTO_UPDATE_SECS="604800"
 # Disable auto-setting terminal title
 DISABLE_AUTO_TITLE="true"
 
+# Completion waiting dots causing havoc with multiline themes
+# https://github.com/ohmyzsh/ohmyzsh/issues/6226#issuecomment-321682739
+COMPLETION_WAITING_DOTS="false"
+
 # Architecture Changes
-m1() { arch -arm64 $1 }
-intel() { arch -x86_64 $1 }
+alias m1='arch -arm64'
+alias intel='arch -x86_64'
 
 # Homebrew on M1 - iBrew for Rosetta Brew
 export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
 alias ibrew='arch -x86_64 /usr/local/bin/brew'
+
+# Colorize
+ZSH_COLORIZE_STYLE="xcode"
+export CLICOLOR=1
+alias ls='ls -G'
+alias l='ls -lahG'
+alias cat='ccat'
+alias less='less'

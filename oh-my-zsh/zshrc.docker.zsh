@@ -1,5 +1,4 @@
-#antigen bundle docker
-#antigen bundle docker-compose
+#!/usr/bin/env zsh
 
 function dnames-fn {
   for ID in `docker ps | awk '{print $1}' | grep -v 'CONTAINER'`
