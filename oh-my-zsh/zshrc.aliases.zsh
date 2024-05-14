@@ -16,9 +16,10 @@ alias cdr="cd ~/repos"
 alias cdw="cd ~/repos/work"
 
 # Config edit shortcuts
-alias zshconfig="emacs ~/.zshrc"
-alias dotfiles="code ~/.dotfiles"
-alias emacsconfig="emacs ~/.emacs"
+alias cfg_zsh="emacs ~/.zshrc"
+alias cfg_dot="code ~/.dotfiles"
+alias cfg_emacs="emacs ~/.emacs"
+alias cfg_als="emacs ~/.zshrc.aliases.zsh"
 
 # Applications
 alias lock="/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resources/CGSession -suspend"
