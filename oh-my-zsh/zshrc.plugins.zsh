@@ -16,3 +16,5 @@ plugins=(
     macos               # ofd, tab, music etc. aliases
     z                   # z command
 )
+
+GLOBALIAS_FILTER_VALUES=(l ls grep cat)

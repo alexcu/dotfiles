@@ -61,7 +61,5 @@ alias ibrew='arch -x86_64 /usr/local/bin/brew'
 # Colorize
 ZSH_COLORIZE_STYLE="xcode"
 export CLICOLOR=1
-alias ls='ls -G'
 alias l='ls -lahG'
 alias cat='ccat'
-alias less='less'
