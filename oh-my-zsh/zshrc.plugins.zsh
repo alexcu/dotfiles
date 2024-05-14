@@ -14,6 +14,7 @@ plugins=(
     git                 # gc, gcb, ga etc. aliases
     globalias           # expands aliases
     macos               # ofd, tab, music etc. aliases
+    screen              # screen status
     z                   # z command
 )
 
