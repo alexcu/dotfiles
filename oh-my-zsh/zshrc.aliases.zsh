@@ -28,6 +28,13 @@ alias c="cheat"
 alias color="osascript -e 'choose color' &"
 alias jqless="jq -C | less -R"
 
+# Ports
+function whichport() { lsof -ti :$1 }
+function killport() { kill $(whichport $1) }
+
+# Scripts
+alias scr="~/repos/scripts"
+
 # Git(Hub)
 alias gper="git -c user.email=alexcu@me.com $1"
 alias gweb="gh repo view -w"
