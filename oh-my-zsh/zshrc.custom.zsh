@@ -33,6 +33,11 @@ setopt no_share_history
 unsetopt inc_append_history
 unsetopt share_history
 
+# Notifications
+function notify() {
+    /usr/bin/osascript -e "display notification \"$*\""
+}
+
 # Drag and drop commands to execute
 # https://discussions.apple.com/thread/254451946
 unset zle_bracketed_paste

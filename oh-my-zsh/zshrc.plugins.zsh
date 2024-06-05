@@ -18,4 +18,5 @@ plugins=(
     z                   # z command
 )
 
+# Dot not expand the following aliases
 GLOBALIAS_FILTER_VALUES=(l ls grep cat)

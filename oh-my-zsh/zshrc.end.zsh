@@ -3,8 +3,6 @@
 # Post-load sourcing for brew-installed plugins...
 brewplugins="$(brew --prefix)/share/"
 
-# zsh Autosuggest and
-
 # Powerlevel10k Theme
 # https://github.com/romkatv/powerlevel10k
 source "$brewplugins/powerlevel10k/powerlevel10k.zsh-theme"
