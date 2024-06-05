@@ -186,3 +186,6 @@ Icon?
 .metals/
 .bloop/ 
 project/metals.sbt
+
+# PR Trains
+.pr-train.yml
