@@ -189,3 +189,5 @@ project/metals.sbt
 
 # PR Trains
 .pr-train.yml
+
+.idea/

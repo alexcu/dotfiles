@@ -1,8 +1,10 @@
 #!/usr/bin/env zsh
 
+# https://github.com/ohmyzsh/ohmyzsh/wiki/Plugins
 plugins=(
     1password           # opwd command
     aliases             # als to show all plugin aliaes
+    bazel               # bzb (build), bzt (test) etc.
     brew                # bcubc
     docker              # dps, dim, drmi etc. aliases
     docker-compose      # dc
