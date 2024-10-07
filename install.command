@@ -35,4 +35,7 @@ install_from_directory "./git" "install.command"
 # emacs
 install_from_directory "./emacs" "install.command"
 
+# tmux
+install_from_directory "./tmux" "install.command"
+
 echo "All installations completed successfully."

@@ -51,6 +51,7 @@ _cfg_zsh() {
 alias cfg_zsh="_cfg_zsh"
 alias cfg_dot="code $HOME_DOTFILES"
 alias cfg_emacs="emacs $HOME/.emacs"
+alias cfg_tmux="emacs ~/.tmux.conf"
 alias cfg_als="emacs $HOME/.zshrc.aliases.zsh"
 alias cfg_scr="code $HOME_SCRIPTS"
 
@@ -82,10 +83,10 @@ function whatport() { lsof -ti :$1 }
 function killport() { lsof -ti :$1 | xargs kill }
 function waitport() {
   [[ "$#" -lt 3 || "$2" != "--" ]] && { echo "Usage: waitfor [port] -- [cmd]"; return 1; }
-  
+
   local port="$1"
   shift 2
-  
+
   while [[ -z $(whatport "$port") ]]; do
     sleep 1
   done
@@ -137,7 +138,7 @@ function gbn() {
 # Precmd hook to refresh aliases based on the current branch every time the prompt is shown
 precmd() {
     local branch_name="$(gbn)"
-    
+
     if [[ -n $branch_name ]]; then
         alias gbcn="git branch --copy $branch_name"
         alias gbct="git branch --copy $branch_name _tmp_$branch_name"
