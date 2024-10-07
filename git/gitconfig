@@ -1,17 +1,35 @@
 [core]
-	editor = emacs
-	excludesfile = ~/.gitignore
+editor = emacs
+excludesfile = ~/.gitignore
+
 [user]
-	email = alex.cummaudo@rea-group.com
-	name = Alex Cummaudo
+	email = alexcu@canva.com
+name = Alex Cummaudo
+
 [push]
-	default = matching
-[branch]
-	autosetuprebase = always
+default = matching
+
 [pull]
-	rebase = true
+rebase = false
+merge = true
+
+[rebase]
+updateRefs = true
+
+[gpg]
+format = ssh
+
 [filter "lfs"]
-	clean = git-lfs clean -- %f
-	smudge = git-lfs smudge -- %f
-	process = git-lfs filter-process
-	required = true
+clean = git-lfs clean -- %f
+smudge = git-lfs smudge -- %f
+process = git-lfs filter-process
+required = true
+
+[color]
+ui = auto
+
+# Work
+[include]
+path = ~/.gitconfig.work
+[maintenance]
+	repo = /Users/alexcu/work/canva

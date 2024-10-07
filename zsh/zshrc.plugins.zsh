@@ -1,5 +1,9 @@
 #!/usr/bin/env zsh
 
+#
+# Enabled zsh plugins
+#
+
 # https://github.com/ohmyzsh/ohmyzsh/wiki/Plugins
 plugins=(
     1password           # opwd command
@@ -16,9 +20,9 @@ plugins=(
     git                 # gc, gcb, ga etc. aliases
     globalias           # expands aliases
     macos               # ofd, tab, music etc. aliases
-    screen              # screen status
+    tmux                # tmux
     z                   # z command
 )
 
 # Dot not expand the following aliases
-GLOBALIAS_FILTER_VALUES=(l ls grep cat)
+GLOBALIAS_FILTER_VALUES=(l ls grep cat tmux)

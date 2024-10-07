@@ -1,5 +1,9 @@
 #!/usr/bin/env zsh
 
+#
+# Docker aliases
+#
+
 function dnames-fn {
   for ID in `docker ps | awk '{print $1}' | grep -v 'CONTAINER'`
   do

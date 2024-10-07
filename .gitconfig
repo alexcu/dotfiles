@@ -1,4 +1,6 @@
+# Use personal ssh key on work machines, or else delete this
 [core]
     sshCommand = ssh -i ~/.ssh/id_rsa_personal -F /dev/null
 [user]
+    name = Alex Cummaudo
     email = git@alexcu.ai

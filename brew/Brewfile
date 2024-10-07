@@ -9,14 +9,16 @@ brew 'zsh-syntax-highlighting'
 brew 'powerlevel10k'
 brew 'pygments'
 
+# Tmux
+brew 'tmux'
+brew 'tmuxp'
+
 # Tools
 brew 'coreutils'
 brew 'git'
 brew 'pandoc'
 brew 'tree'
-cask 'fig'
 brew 'pdfgrep'
-#brew 'blueutil'
 
 # Development
 brew 'emacs'

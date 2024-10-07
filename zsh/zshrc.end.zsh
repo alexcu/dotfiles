@@ -1,7 +1,13 @@
 #!/usr/bin/env zsh
 
+#
+# Post .zshrc run for things to place "at the end of your .zshrc"
+#
+
 # Post-load sourcing for brew-installed plugins...
 brewplugins="$(brew --prefix)/share/"
+
+export PATH=$PATH:/Users/alexcu/.local/bin
 
 # Powerlevel10k Theme
 # https://github.com/romkatv/powerlevel10k

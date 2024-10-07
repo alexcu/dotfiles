@@ -1,12 +1,46 @@
-#/usr/bin/env bash
-bearer=$(cat ~/.bitlytoken)
-link=$(curl -s -X POST \
- https://api-ssl.bitly.com/v4/bitlinks \
- -H "Authorization: Bearer $bearer" \
- -H 'Content-Type: application/json' \
- -d "{
- \"group_guid\": \"Bb8u8JHuuwo\",
- \"long_url\": \"$1\"
-}" | sed -E "s/^.+link\":\"([^\"]+).+$/\1/")
-echo $link | pbcopy
-echo $link has been copied to the keyboard
+#!/usr/bin/env bash
+
+# Ensure a URL argument is provided
+if [ $# -ne 1 ]; then
+  echo "Usage: $0 <long_url>"
+  exit 1
+fi
+
+# Check if the token file exists
+TOKEN_FILE="$HOME/.bitlytoken"
+if [ ! -f "$TOKEN_FILE" ]; then
+  echo "Token file not found: $TOKEN_FILE"
+  exit 1
+fi
+
+# Read the bearer token
+bearer=$(cat "$TOKEN_FILE")
+
+# Encode the URL argument
+long_url=$(printf '%s' "$1" | jq -sRr @uri)
+
+# Make the API request
+response=$(curl -s -X POST \
+  https://api-ssl.bitly.com/v4/bitlinks \
+  -H "Authorization: Bearer $bearer" \
+  -H 'Content-Type: application/json' \
+  -d "{
+    \"group_guid\": \"Bb8u8JHuuwo\",
+    \"long_url\": \"$long_url\"
+  }")
+
+# Extract the shortened URL from the response
+link=$(echo "$response" | sed -E 's/^.+link":"([^"]+).+$/\1/')
+
+# Check if the link was successfully extracted
+if [ -z "$link" ]; then
+  echo "Failed to create a shortened URL. Response from Bitly API:"
+  echo "$response"
+  exit 1
+fi
+
+# Copy the link to the clipboard
+echo "$link" | pbcopy
+
+# Inform the user
+echo "$link has been copied to the clipboard."
