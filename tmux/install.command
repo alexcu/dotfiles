@@ -16,5 +16,6 @@ echo "  ./tmux.conf -> $HOME/.tmux.conf"
 echo "  ./tmuxp -> $HOME/.tmuxp"
 echo "  ./tmux.sh -> $HOME/.tmux.sh"
 
+ln -nsf "$BASEDIR/tmux.conf" "$HOME/.tmux.conf"
 ln -nsf "$BASEDIR/tmux.sh" "$HOME/.tmux.sh"
 ln -nsf "$BASEDIR/tmuxp" "$HOME/.tmuxp"
