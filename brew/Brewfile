@@ -6,6 +6,11 @@ brew 'zsh'
 brew 'zsh-autocomplete'
 brew 'zsh-autosuggestions'
 brew 'zsh-syntax-highlighting'
+brew 'bat'
+brew 'fzf'
+brew 'fd'
+brew 'zoxide'
+brew 'delta'
 brew 'powerlevel10k'
 brew 'pygments'
 
@@ -28,8 +33,6 @@ brew 'ruby-build'
 cask 'visual-studio-code'
 
 # Work + Sync
-#cask 'slack'
-#cask 'microsoft-outlook' # needed until new version is out
 cask 'zoom'
 cask 'google-drive'
 
