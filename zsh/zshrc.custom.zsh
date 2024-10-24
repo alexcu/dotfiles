@@ -43,10 +43,41 @@ HOMEBREW_AUTO_UPDATE_SECS="604800"
 COMPLETION_WAITING_DOTS="false"
 
 # History management
-HISTFILE=~/.zsh_history
-HISTSIZE=100000
-SAVEHIST=10000
-setopt APPEND_HISTORY
-setopt SHARE_HISTORY
-setopt INC_APPEND_HISTORY
-setopt INC_APPEND_HISTORY_TIME
+HISTFILE="$HOME/.zsh_history"
+HISTSIZE=1000000  # Number of history entries to keep in memory
+SAVEHIST=1000000  # Number of history entries to save to the file
+
+# History options
+setopt HIST_EXPIRE_DUPS_FIRST   # Remove older duplicate entries first when trimming history
+setopt HIST_IGNORE_DUPS         # Don't record an entry that was just executed
+setopt HIST_REDUCE_BLANKS       # Remove leading/trailing blanks and reduce multiple spaces
+setopt INC_APPEND_HISTORY       # Write each command to the history file immediately after execution
+setopt INC_APPEND_HISTORY_TIME  # Record timestamps for each history entry
+
+# Ensure per-session history management
+unsetopt share_history
+
+# Ignore any history with a space prefix
+setopt HIST_IGNORE_SPACE
+
+# Always use emacs
+export EDITOR='emacs'
+export VISUAL='emacs'
+
+# Prefer /usr/local/bin over /usr/bin for brew installs
+export PATH="$HOME/.pyenv/bin:$PATH"
+
+# Don't auto-update Brew, instead use brewautoupate
+# See https://apple.stackexchange.com/a/353010
+export HOMEBREW_NO_AUTO_UPDATE=1
+
+# Colorize shell
+ZSH_COLORIZE_STYLE="xcode"
+export CLICOLOR=1
+export BAT_THEME="Visual Studio Dark+"
+
+# Rebind SIGQUIT from ^\ to ^X for tmux ^\\
+if [[ -t 1 ]]; then
+    stty quit ^X
+    stty quit ^-
+fi

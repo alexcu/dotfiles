@@ -26,6 +26,33 @@ else
   sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 fi
 
+echo "Checking for fzf-tab zsh plugin..."
+if [ -d "$HOME/.oh-my-zsh/custom/plugins/fzf-tab" ]; then
+  echo "fzf-tab is installed"
+else
+  echo "fzf-tab is not installed. Installing it..."
+  git clone https://github.com/Aloxaf/fzf-tab.git "$HOME/.oh-my-zsh/custom/plugins/fzf-tab"
+  # Required for building binary tab module
+  brew install groff
+fi
+
+echo "Checking for fzf-git zsh plugin..."
+if [ -d "$HOME/.oh-my-zsh/custom/plugins/fzf-git" ]; then
+  echo "fzf-git is installed"
+else
+  echo "fzf-git is not installed. Installing it..."
+  git clone https://github.com/junegunn/fzf-git.sh.git "$HOME/.oh-my-zsh/custom/plugins/fzf-git"
+fi
+
+# Make projects and llog directories
+echo "Making /usr/local/llog -> ~/.llog and /usr/local/projects -> ~/.proj"
+sudo mkdir /usr/local/llog
+sudo chown "$USER" /usr/local/llog
+sudo mkdir /usr/local/projects
+sudo chown "$USER" /usr/local/projects
+ln -s /usr/local/llog "$HOME/.llog"
+ln -s /usr/local/projects "$HOME/.projects"
+
 # Link it up
 echo "Linking .zshrc files..."
 BASEDIR=$(greadlink -f "$(dirname "$0")")
@@ -36,6 +63,9 @@ echo "  ./zshrc.aliases.zsh     -> $HOME/.zshrc.aliases.zsh"
 echo "  ./zshrc.plugins.zsh     -> $HOME/.zshrc.plugins.zsh"
 echo "  ./zshrc.custom.zsh      -> $HOME/.zshrc.custom.zsh"
 echo "  ./zshrc.docker.zsh      -> $HOME/.zshrc.docker.zsh"
+echo "  ./p10k.zsh              -> $HOME/.p10k.zsh"
+echo "  ./fzf-preview.zsh       -> $HOME/.zshrc.plugins.fzf-preview.zsh"
+
 ln -nsf "$BASEDIR/zshrc.zsh" "$HOME/.zshrc"
 ln -nsf "$BASEDIR/zshrc.top.zsh" "$HOME/.zshrc.top.zsh"
 ln -nsf "$BASEDIR/zshrc.end.zsh" "$HOME/.zshrc.end.zsh"
@@ -44,8 +74,13 @@ ln -nsf "$BASEDIR/zshrc.aliases.zsh" "$HOME/.zshrc.aliases.zsh"
 ln -nsf "$BASEDIR/zshrc.custom.zsh" "$HOME/.zshrc.custom.zsh"
 ln -nsf "$BASEDIR/zshrc.docker.zsh" "$HOME/.zshrc.docker.zsh"
 ln -nsf "$BASEDIR/p10k.zsh" "$HOME/.p10k.zsh"
+ln -nsf "$BASEDIR/fzf-preview.zsh" "$HOME/.zshrc.plugins.fzf-preview.zsh"
 
 # Lock down .zshrc for other scripts to butcher
 echo "Locking down .zshrc from future edits..."
 chmod 600 "$HOME/.zshrc"
 sudo chflags uchg "$HOME/.zshrc"
+
+# Need to build fzf-tab binary
+echo "Please restart shell and build fzf-tab binary by running:"
+echo "    build-fzf-tab-module"

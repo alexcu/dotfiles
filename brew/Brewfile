@@ -24,6 +24,8 @@ brew 'git'
 brew 'pandoc'
 brew 'tree'
 brew 'pdfgrep'
+brew 'eza'
+brew 'ncdu'
 
 # Development
 brew 'emacs'

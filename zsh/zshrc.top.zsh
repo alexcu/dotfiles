@@ -11,3 +11,9 @@ fi
 
 # Disable auto-setting terminal title for tmuxp
 export DISABLE_AUTO_TITLE='true'
+
+# Set the custom directory of zsh plugins
+export ZSH_CUSTOM="$HOME/.oh-my-zsh/custom"
+
+# Set caching directory
+export ZSH_COMDUMP="$HOME/.cache/zsh/compcache/zcomdump"
