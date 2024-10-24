@@ -1,9 +1,11 @@
 [core]
 editor = emacs
 excludesfile = ~/.gitignore
+pager = delta --paging=always
+untrackedCache = true
 
 [user]
-	email = alexcu@canva.com
+email = git@alexcu.ai
 name = Alex Cummaudo
 
 [push]
@@ -28,8 +30,19 @@ required = true
 [color]
 ui = auto
 
-# Work
+[interactive]
+diffFilter = delta --color-only
+
+[delta]
+features = side-by-side line-numbers
+line-numbers = true
+side-by-side = false
+decorations = bold
+
+[oh-my-zsh]
+hide-status = 1
+hide-dirty = 1
+
+# Work (Place Last)
 [include]
 path = ~/.gitconfig.work
-[maintenance]
-	repo = /Users/alexcu/work/canva
