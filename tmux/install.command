@@ -14,8 +14,10 @@ BASEDIR=$(greadlink -f "$(dirname "$0")")
 echo "Linking:"
 echo "  ./tmux.conf -> $HOME/.tmux.conf"
 echo "  ./tmuxp -> $HOME/.tmuxp"
-echo "  ./tmux.sh -> $HOME/.tmux.sh"
+echo "  ./tmuxp.init.sh -> $HOME/.tmux.tmuxp.init"
+echo "  ./pane.init.sh -> $HOME/.tmux.pane.init"
 
 ln -nsf "$BASEDIR/tmux.conf" "$HOME/.tmux.conf"
-ln -nsf "$BASEDIR/tmux.sh" "$HOME/.tmux.sh"
 ln -nsf "$BASEDIR/tmuxp" "$HOME/.tmuxp"
+ln -nsf "$BASEDIR/tmuxp.init.sh" "$HOME/.tmux.tmuxp.init"
+ln -nsf "$BASEDIR/pane.init.sh" "$HOME/.tmux.pane.init"

@@ -1,6 +1,15 @@
 session_name: scratch
 start_directory: '${HOME}'
+global_options:
+  automatic-rename: off
+
 windows:
   - window_name: ''
+    layout: even-horizontal
+    focus: true
     panes:
-      -
+    - shell_command:
+        - " tip! scratch:1.1 htop"
+        - htop 
+    - shell_command:
+        - " tip! scratch:1.2"
