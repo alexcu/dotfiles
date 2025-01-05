@@ -4,3 +4,7 @@
 [user]
     name = Alex Cummaudo
     email = git@alexcu.ai
+
+# Include work
+[include]
+    path = ~/.gitconfig.work

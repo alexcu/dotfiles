@@ -49,9 +49,9 @@ echo "Making /usr/local/llog -> ~/.llog and /usr/local/projects -> ~/.proj"
 sudo mkdir /usr/local/llog
 sudo chown "$USER" /usr/local/llog
 sudo mkdir /usr/local/projects
-sudo chown "$USER" /usr/local/projects
+sudo chown "$USER" /usr/local/proj
 ln -s /usr/local/llog "$HOME/.llog"
-ln -s /usr/local/projects "$HOME/.projects"
+ln -s /usr/local/projects "$HOME/.proj"
 
 # Link it up
 echo "Linking .zshrc files..."
@@ -84,3 +84,6 @@ sudo chflags uchg "$HOME/.zshrc"
 # Need to build fzf-tab binary
 echo "Please restart shell and build fzf-tab binary by running:"
 echo "    build-fzf-tab-module"
+
+echo "Setting Zsh as default shell..."
+chsh -s "$(which zsh)"

@@ -88,6 +88,46 @@ alias dsh="date +%F"
 alias dsc="date +%Y%m%d"
 # Date identifier suffixed with word-based identifier
 alias dsid="echo $(dsc)_$(w3w)"
+# Quickly get days until something
+function daysuntil() {
+    local today=$(date +%Y-%m-%d)  # Default start date is today
+    local target_date=""
+    local start_date=""
+    local show_days_only=false
+
+    # Parse parameters
+    while [[ "$#" -gt 0 ]]; do
+        case "$1" in
+            -d) show_days_only=true ;;
+            -t) start_date="$2"; shift ;;
+            *) target_date="$1" ;;
+        esac
+        shift
+    done
+
+    # If no start date is provided with -t, use today's date
+    if [[ -z "$start_date" ]]; then
+        start_date=$today
+    fi
+
+    # Ensure the target date is provided
+    if [[ -z "$target_date" ]]; then
+        echo "Usage: daysuntil [target_date] [-d] [-t start_date]"
+        return 1
+    fi
+
+    # If -d is provided, show only days
+    if [[ "$show_days_only" = true ]]; then
+        ddiff "$start_date" "$target_date" -f '%d days'
+    else
+        # Get the full result in years, months, weeks, and days
+        result=$(ddiff "$start_date" "$target_date" -f '%y years, %m months, %w weeks, %d days')
+
+        # Remove components that are 0 (like "0 years", "0 months")
+        result=$(echo "$result" | sed -E 's/\b0 (years?|months?|weeks?|days?)\b[,]?//g' | sed 's/ ,/,/g' | sed 's/, *$//; s/^, *//')
+        echo "$result"
+    fi
+}
 
 # Common HOME paths
 export HOME_DESKTOP="$HOME/Desktop"
@@ -125,15 +165,15 @@ alias cdllog="cd $HOME_LLOG"
 _cfg_zsh() {
     echo Unlocking .zshrc for edits...
     sudo chflags nouchg ~/.zshrc
-    emacs $HOME/.zshrc
+    $EDITOR $HOME/.zshrc
     echo Locking down .zshrc for edits...
     sudo chflags uchg ~/.zshrc
 }
 alias cfg_zsh="_cfg_zsh"
 alias cfg_dot="code $HOME_DOTFILES"
-alias cfg_emacs="emacs $HOME/.emacs"
-alias cfg_tmux="emacs $HOME/.tmux.conf"
-alias cfg_als="emacs $HOME/.zshrc.aliases.zsh"
+alias cfg_emacs="$EDITOR $HOME/.emacs"
+alias cfg_tmux="$EDITOR $HOME/.tmux.conf"
+alias cfg_als="$EDITOR $HOME/.zshrc.aliases.zsh"
 alias cfg_scr="code $HOME_SCRIPTS"
 
 # Prefix for all executable scripts in $HOME_SCRIPTS
@@ -195,7 +235,8 @@ function tlog() {
 
 # Applications
 alias vs="code"
-alias zsh\!="echo Removing $ZSH_COMDUMP... && rm $ZSH_COMDUMP && echo Started nested zsh shell... && zsh"
+alias csv="vd"
+alias zsh\!="echo Removing $ZSH_COMDUMP... && rm $ZSH_COMDUMP && echo -n Sourcing $HOME/.zshrc... && source $HOME/.zshrc > /dev/null && echo Done!"
 alias lock="/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resources/CGSession -suspend"
 alias sleepd="pmset displaysleepnow"
 alias c="cheat"
@@ -205,6 +246,11 @@ alias hide="chflags hidden ."
 alias unhide="chflags nohidden ."
 alias bubu="brew update && brew upgrade"
 alias dockspacer="defaults write com.apple.dock persistent-apps -array-add '{tile-data={}; tile-type=\"small-spacer-tile\";}' && killall Dock"
+function dpython3 () {
+    local listen_at=${DEBUGPY_HOST-"localhost:5678"}
+    echo "Starting debugpy to listen at $listen_at..."
+    PYDEVD_DISABLE_FILE_VALIDATION=1 debugpy --listen "$listen_at" --wait-for-client "$@"
+}
 
 # Ports
 function whatport() { lsof -ti :$1 }
@@ -279,7 +325,7 @@ alias gmm="git merge origin master"
 alias gper="git -c user.email=alexcu@me.com $1"
 alias gpor="git pull --rebase origin master || git pull --rebase origin main"
 alias gprt="git pr-train"
-alias gprtc="emacs ./.pr-train.yml"
+alias gprtc="$EDITOR ./.pr-train.yml"
 alias gprtp="git pr-train -p"
 alias gprtpr="git pr-train -p --create-prs --draft"
 alias gpup="git pull --rebase upstream master || git pull --rebase upstream main"
@@ -298,55 +344,81 @@ function gig() {
 # Must unalias `git` plugin gwip
 gunalias gwip 2>/dev/null
 function gwip() {
-    set -e
-    if git diff-index --quiet HEAD; then
-        echo "No changes to push a WIP commit. Aborting."
-        return 1
-    else
-        # Determine base branch
-        local base_branch=${1-master}
-        echo "Start git WIP push..."
+    local force=0
+    local base_branch="master"
 
-        echo "Adding changes..."
-        git add -A
+    # Parse options
+    while getopts "f" opt; do
+      case ${opt} in
+        f )
+          force=1
+          ;;
+        \? )
+          echo "Usage: gwip [-f] [base-branch]"
+          return 1
+          ;;
+      esac
+    done
+    shift $((OPTIND -1))
 
-        # Find or create the local WIP branch wip/<base_branch>
-        local current_branch=$(git rev-parse --abbrev-ref HEAD)
-        local wip_branch="wip/$current_branch"
-
-        # Check if current branch is already a WIP branch, avoid nesting
-        if [[ $current_branch == wip/* ]]; then
-            local wip_branch="$current_branch"
-            # Strip the "wip/" prefix for remote branch
-            local remote_branch=${current_branch#*/}
-        else
-            local wip_branch="wip/$current_branch"
-            local remote_branch="$current_branch"
-        fi
-
-        # Finding base WIP commit
-        echo "Finding base WIP commit..."
-        local base_wip_commit=$(git log --author=$(git config user.email) --grep="^wip$" -n 1 --pretty=format:"%H")
-
-        if [ -n "$base_wip_commit" ]; then
-            echo "Found base WIP commit: $base_wip_commit"
-            git commit --no-verify --no-gpg-sign --fixup=$base_wip_commit
-        else
-            echo "No WIP commit found, creating new one"
-            git commit --no-verify --no-gpg-sign --message="wip"
-        fi
-
-        echo "Fetching $base_branch..."
-        git fetch origin $base_branch:$base_branch
-
-        echo "Rebasing $base_branch..."
-        git rebase $base_branch
-
-        # Push the WIP branch locally to the remote branch <existing-branch-name>-wip
-        local remote_wip_branch="${remote_branch}-wip"
-        echo "Pushing WIP commit to remote branch: $remote_wip_branch"
-        git push --force origin $wip_branch:$remote_wip_branch
+    # Set the base branch if provided
+    if [ -n "$1" ]; then
+        base_branch="$1"
     fi
+
+    # Check for changes unless -f is provided
+    if [ "$force" -eq 0 ]; then
+        if git diff-index --quiet HEAD; then
+            echo "No changes to push a WIP commit. Aborting."
+            return 1
+        fi
+    fi
+
+    echo "Start git WIP push..."
+
+    # Adding changes, exit on failure
+    echo "Adding changes..."
+    git add -A || { echo "Failed to add changes"; return 1; }
+
+    # Determine the current branch and WIP branch
+    local current_branch=$(git rev-parse --abbrev-ref HEAD) || { echo "Failed to get current branch"; return 1; }
+    local wip_branch="wip/$current_branch"
+    local remote_branch="$current_branch"
+
+    # Check if current branch is already a WIP branch, avoid nesting
+    if [[ $current_branch == wip/* ]]; then
+        wip_branch="$current_branch"
+        remote_branch="${current_branch#*/}"
+    else
+        # Create WIP branch, exit on failure
+        echo "Creating WIP branch: $wip_branch..."
+        git checkout -b $wip_branch || { echo "Failed to create WIP branch"; return 1; }
+    fi
+
+    # Find the base WIP commit, exit on failure
+    echo "Finding base WIP commit..."
+    local base_wip_commit=$(git log --author=$(git config user.email) --grep="^wip$" -n 1 --pretty=format:"%H")
+
+    if [ -n "$base_wip_commit"  ]; then
+        echo "Found base WIP commit: $base_wip_commit"
+        git commit --allow-empty --no-verify --no-gpg-sign --fixup=$base_wip_commit || { echo "Failed to create fixup commit"; return 1; }
+    else
+        echo "No WIP commit found, creating new one"
+        git commit --allow-empty --no-verify --no-gpg-sign --message="wip" || { echo "Failed to create new WIP commit"; return 1; }
+    fi
+
+    # Fetch base branch, exit on failure
+    echo "Fetching $base_branch..."
+    git fetch origin $base_branch:$base_branch || { echo "Failed to fetch base branch $base_branch"; return 1; }
+
+    # Rebase base branch, exit on failure
+    echo "Rebasing $base_branch..."
+    git rebase $base_branch || { echo "Rebase failed"; return 1; }
+
+    # Push the WIP commit, exit on failure
+    local remote_wip_branch="${remote_branch}-wip"
+    echo "Pushing WIP commit to remote branch: $remote_wip_branch"
+    git push --force origin $wip_branch:$remote_wip_branch || { echo "Failed to push WIP branch"; return 1; }
 
     echo "Squash all WIPs using: gwips $base_branch"
 }
