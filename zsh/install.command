@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+package-install RET color-theme-sanityinc-tomorrow RET#!/usr/bin/env bash
 
 set -e
 
@@ -32,6 +32,9 @@ if [ -d "$HOME/.oh-my-zsh/custom/plugins/fzf-tab" ]; then
 else
   echo "fzf-tab is not installed. Installing it..."
   git clone https://github.com/Aloxaf/fzf-tab.git "$HOME/.oh-my-zsh/custom/plugins/fzf-tab"
+  if [ "$(uname)" == "Linux" ];
+      sudo apt install zsh-dev
+  fi
   # Required for building binary tab module
   brew install groff
 fi
@@ -46,10 +49,10 @@ fi
 
 # Make projects and llog directories
 echo "Making /usr/local/llog -> ~/.llog and /usr/local/projects -> ~/.proj"
-sudo mkdir /usr/local/llog
+sudo -p mkdir /usr/local/llog
 sudo chown "$USER" /usr/local/llog
-sudo mkdir /usr/local/projects
-sudo chown "$USER" /usr/local/proj
+sudo -p mkdir /usr/local/projects
+sudo chown "$USER" /usr/local/projects
 ln -s /usr/local/llog "$HOME/.llog"
 ln -s /usr/local/projects "$HOME/.proj"
 
@@ -79,11 +82,19 @@ ln -nsf "$BASEDIR/fzf-preview.zsh" "$HOME/.zshrc.plugins.fzf-preview.zsh"
 # Lock down .zshrc for other scripts to butcher
 echo "Locking down .zshrc from future edits..."
 chmod 600 "$HOME/.zshrc"
-sudo chflags uchg "$HOME/.zshrc"
+if [ "$(uname)" = "Dawrin" ]; then
+    sudo chflags uchg "$HOME/.zshrc"
+fi
 
 # Need to build fzf-tab binary
 echo "Please restart shell and build fzf-tab binary by running:"
+if [ "$(uname)" = "Linux" ]; then
+    echo "    sudo apt install libncurses5-dev libncursesw5-dev"
+fi
 echo "    build-fzf-tab-module"
 
 echo "Setting Zsh as default shell..."
+if [ "$(unname)" = "Linux" ]; then
+    sudo sh -c 'echo "/home/linuxbrew/.linuxbrew/bin/zsh" >> /etc/shells'
+fi
 chsh -s "$(which zsh)"

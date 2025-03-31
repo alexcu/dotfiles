@@ -2,8 +2,6 @@
 
 set -e
 
-¢
-
 if ! command -v greadlink >/dev/null 2>&1; then
   echo "greadlink is not installed. Please install coreutils to proceed."
   exit 1

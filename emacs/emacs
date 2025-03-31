@@ -1,3 +1,9 @@
+;; emacs plugins
+(require 'package)
+(add-to-list 'package-archives
+             '("melpa" . "https://melpa.org/packages/"))
+(package-initialize)
+
 ;; Fix emacs in tmux
 (xterm-mouse-mode 1)
 (global-set-key [mouse-4] 'scroll-down-line)
@@ -25,12 +31,6 @@
 
 ;; Rules at 50 and 72
 (add-hook 'prog-mode-hook #'display-fill-column-indicator-mode)
-
-;; Markdown
-(require 'package)
-(add-to-list 'package-archives
-             '("melpa-stable" . "https://stable.melpa.org/packages/"))
-(package-initialize)
 
 ;; Theme
 (require 'color-theme-sanityinc-tomorrow)
@@ -93,4 +93,4 @@
     (setq deactivate-mark deactivate)))
 (advice-add 'move-text-up :after 'indent-region-advice)
 (advice-add 'move-text-down :after 'indent-region-advice)
-(move-text-default-bindings)
+;; (move-text-default-bindings)

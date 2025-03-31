@@ -17,3 +17,12 @@ fi
 echo "Linking ./emacs -> ~/.emacs"
 BASEDIR=$(greadlink -f "$(dirname "$0")")
 ln -nsf "$BASEDIR/emacs" ~/.emacs
+
+emacs --batch \
+      --eval "(require 'package)" \
+      --eval "(add-to-list 'package-archives '(\"melpa\" . \"https://melpa.org/packages/\"))" \
+      --eval "(package-initialize)" \
+      --eval "(package-refresh-contents)" \
+      --eval "(package-install (quote color-theme-sanityinc-tomorrow))" \
+      --eval "(package-install (quote no-littering))" \
+      --eval "(package-install (quote move-text-default-bindings))"

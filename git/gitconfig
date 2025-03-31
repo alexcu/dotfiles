@@ -44,6 +44,9 @@ decorations = bold
 hide-status = 1
 hide-dirty = 1
 
+[credential]
+useHttpPath = true
+
 # Work (Place Last)
 [include]
 path = ~/.gitconfig.work
