@@ -28,18 +28,19 @@ plugins=(
     docker              # dps, dim, drmi etc. aliases
     command-not-found   # provides packages where command exists
     colorize            # colourises cat/less output
+    colored-man-pages   # colourises man pages
     eza                 # replace ls with eza
     fzf                 # fuzzy finder
     fzf-tab             # fuzzy finder tab-complete
-    colored-man-pages   # colourises man pages
     fancy-ctrl-z        # press ctrl+z again to go back to suspended app
     gnu-utils           # working with gnu-utils
     git                 # gc, gcb, ga etc. aliases
     globalias           # expands aliases
+    z                   # z <dir> to jump to directory
 )
 
 # Dot not expand the following aliases
-GLOBALIAS_FILTER_VALUES=(1 l ls grep cat tmux tip)
+GLOBALIAS_FILTER_VALUES=(1 l ls grep cat tmux tip z)
 
 # This speeds up pasting w/ autosuggest
 # https://github.com/zsh-users/zsh-autosuggestions/issues/238

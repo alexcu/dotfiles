@@ -157,9 +157,9 @@ alias cdd="cd $HOME_DESKTOP"
 alias cdl="cd $HOME_DOWNLOADS"
 alias cdr="cd $HOME_REPOS"
 alias cdw="cd $HOME_WORK"
-alias cds="cd $HOME_SCRIPTS"
 alias cdp="cd $HOME_PROJECTS"
 alias cdllog="cd $HOME_LLOG"
+alias cds="cd $START_DIR"
 
 # Config edit shortcuts
 _cfg_zsh() {
@@ -322,6 +322,7 @@ alias ghprw="gh pr view --web"
 alias ghs="git rev-parse --short HEAD"
 alias ghsr="(ghs | xargs echo 'Resolved in') | pbcopy"
 alias gmm="git merge origin master"
+alias gmnc="git merge --no-commit"
 alias gper="git -c user.email=alexcu@me.com $1"
 alias gpor="git pull --rebase origin master || git pull --rebase origin main"
 alias gprt="git pr-train"
@@ -572,4 +573,22 @@ function undef() {
     eval "alias $new_name=$alias_definition"
     unalias "$original_name"
   fi
+}
+
+# Automatically venv activate
+venva() {
+    # Traverse upwards to find the closest "venv" or ".venv" directory
+    local dir=$(pwd)
+    while [[ $dir != "/" ]]; do
+        if [[ -f "$dir/venv/bin/activate" ]]; then
+            source "$dir/venv/bin/activate"
+            return
+        elif [[ -f "$dir/.venv/bin/activate" ]]; then
+            source "$dir/.venv/bin/activate"
+            return
+        fi
+        dir=$(dirname "$dir")
+    done
+    echo "No venv or .venv found in the directory tree."
+    return 1
 }

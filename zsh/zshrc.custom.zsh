@@ -81,3 +81,17 @@ if [[ -t 1 ]]; then
     stty quit ^X
     stty quit ^-
 fi
+
+# Enable unlimited file descriptors
+ulimit -n unlimited
+
+# Allow for Alt-Space to trigger wrap of last word in a subshell
+# makes things like `git checkout $(gbn)` work a lot nicer
+wrap_last_word_in_subshell() {
+  zle backward-word
+  zle kill-word
+  local word=$CUTBUFFER
+  LBUFFER+="\$(${word})"
+}
+zle -N wrap_last_word_in_subshell
+bindkey '^[ ' wrap_last_word_in_subshell
