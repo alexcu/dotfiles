@@ -190,4 +190,10 @@ project/metals.sbt
 # PR Trains
 .pr-train.yml
 
+# IntelliJ
 .idea/
+.idea/inspectionProfiles/Project_Default.xml
+
+# Python in vscode
+.pylintrc
+pyrightconfig.json

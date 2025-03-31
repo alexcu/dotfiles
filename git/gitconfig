@@ -3,6 +3,7 @@ editor = emacs
 excludesfile = ~/.gitignore
 pager = delta --paging=always
 untrackedCache = true
+symlinks = true
 
 [user]
 email = git@alexcu.ai
@@ -46,5 +47,3 @@ hide-dirty = 1
 # Work (Place Last)
 [include]
 path = ~/.gitconfig.work
-[trace2]
-	eventtarget = af_unix:dgram:/tmp/olly-git-trace2.sock
