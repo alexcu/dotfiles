@@ -83,7 +83,7 @@ if [[ -t 1 ]]; then
 fi
 
 # Enable unlimited file descriptors
-ulimit -n unlimited
+ulimit -n 65535
 
 # Allow for Alt-Space to trigger wrap of last word in a subshell
 # makes things like `git checkout $(gbn)` work a lot nicer

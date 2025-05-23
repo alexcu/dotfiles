@@ -141,6 +141,10 @@ export HOME_PROJECTS="$HOME/.proj"
 export HOME_LLOG="$HOME/.llog"
 export HOME_SCRIPTS="$HOME/.scripts"
 
+# Common HOME paths (short)
+export d="$HOME_DESKTOP"
+export l="$HOME_DOWNLOADS"
+
 # Tilde suffixes
 alias \~d="$HOME_DESKTOP"
 alias \~l="$HOME_DOWNLOADS"
@@ -251,6 +255,7 @@ function dpython3 () {
     echo "Starting debugpy to listen at $listen_at..."
     PYDEVD_DISABLE_FILE_VALIDATION=1 debugpy --listen "$listen_at" --wait-for-client "$@"
 }
+alias k="clear"
 
 # Ports
 function whatport() { lsof -ti :$1 }
@@ -292,9 +297,11 @@ function confirm() {
 # Git(Hub)
 alias gad="git add --all && git commit --message '.'"
 alias gar="git ls-files -u | awk '{print \$4}' | sort -u | xargs git add"
-alias gb="git branch | grep -v '^\s*z/' | fzf"
+alias gB="git branch | grep -v '^\s*z/' | fzf"
+alias gb="git branch --format='%(refname:short)' | grep -v '^\s*z/' | fzf | xargs git switch"
 alias gbc="git branch --copy"
-alias gC="git commit --message \""
+alias gc="git commit --message \""
+alias gC="git commit"
 alias gcbor="(gco master || gco main) && gpor && gcb $1"
 alias gcbup="(gco master || gco main) && gpup && gcb $1"
 alias gcd="git commit --message '.'"
@@ -307,15 +314,15 @@ alias gcom\!="git checkout master"
 alias gcom="gfm && git checkout master"
 alias gcom="git checkout master"
 alias gcpn="git cherry-pick --no-commit"
-alias gcpn="git cherry-pick --no-commit"
-alias gcpn="git cherry-pick --no-commit"
+alias gcwip="git commit -m 'WIP'"
 alias gd="git diff --"
 alias gD="git diff"
 alias gfm="git fetch origin master:master"
-alias ggpushnotify="notify Changes have been pushed"
+alias ggpull="git pull origin $(git_current_branch) && notify 'Pull Success' 'Git Pull' '📥 ✅' 'Glass' || notify 'Pull Failed' 'Git Pull' '📥 ❌' 'Basso'"
+alias ggpush="git push origin $(git_current_branch) && notify 'Push Success' 'Git Push' '📤 ✅' 'Glass' || notify 'Push Failed' 'Git Push' '📤 ❌' 'Basso'"
 alias ggpushper="ssh-add ~/.ssh/id_rsa_personal && ggpush &&  ssh-add -d  ~/.ssh/id_rsa_personal"
-alias ggpushs="ggpush && (ghs | pbcopy) && ggpushnotify"
-alias ggpushsr="ghsr && ggpush && ggpushnotify"
+alias ggpushs="ggpush && (ghs | pbcopy)"
+alias ggpushsr="ghsr && ggpushs"
 alias ghpr="gh pr"
 alias ghprc="gh pr create --web"
 alias ghprw="gh pr view --web"
@@ -327,12 +334,14 @@ alias gper="git -c user.email=alexcu@me.com $1"
 alias gpor="git pull --rebase origin master || git pull --rebase origin main"
 alias gprt="git pr-train"
 alias gprtc="$EDITOR ./.pr-train.yml"
-alias gprtp="git pr-train -p"
-alias gprtpr="git pr-train -p --create-prs --draft"
+alias gprtp="git pr-train --push --create-prs --draft"
+alias gprtl="git pr-train --list"
 alias gpup="git pull --rebase upstream master || git pull --rebase upstream main"
 alias grbm="git rebase master"
+alias grhH="git reset --hard HEAD"
 alias grsta="git restore --staged ."
-alias gs="git stash"when
+alias gs="git stash"
+alias gsts='git status -s | awk '\''{print $2}'\'' | paste -sd " " -'
 alias gt="git tag"
 alias gweb="gh repo view -w"
 
@@ -542,7 +551,11 @@ function lm() {
 
 # Notifications
 function notify() {
-    /usr/bin/osascript -e "display notification \"$*\""
+    message=$1
+    icon=$3
+    title="${icon:+$icon }$2"
+    sound=$4
+    /usr/bin/osascript -e "display notification \"$message\" with title \"$title\" sound name \"$sound\""
 }
 
 # Architecture Changes
@@ -576,6 +589,7 @@ function undef() {
 }
 
 # Automatically venv activate
+alias venvc="python3 -m venv ./.venv"
 venva() {
     # Traverse upwards to find the closest "venv" or ".venv" directory
     local dir=$(pwd)
@@ -592,3 +606,12 @@ venva() {
     echo "No venv or .venv found in the directory tree."
     return 1
 }
+
+# Ping alert sounds
+alias p="afplay -v 0.5 $HOME/Library/Sounds/Sosumi.aiff"
+alias p1="afplay -v 0.3 $HOME/Library/Sounds/Quack.aiff"
+alias p2="afplay -v 0.3 $HOME/Library/Sounds/Indigo.aiff"
+
+# Realpath and basename
+alias rp="realpath"
+alias bn="basename"

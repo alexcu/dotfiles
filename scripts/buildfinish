@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+set -e
+
+status=$1
+
+function notify() {
+    message=$1
+    icon=$2
+    title="🚧 $icon Build Status"
+    sound=$3
+    /usr/bin/osascript -e "display notification \"$message\" with title \"$title\" sound name \"$sound\""
+}
+
+# For dev that accepts last command arg 0 for success and 1 for failure
+if [[ $status -eq 0 ]]; then
+    notify "Build Passed" "✅" "Glass"
+else
+    notify "Build Failed" "❌" "Basso"
+fi

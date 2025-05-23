@@ -1,5 +1,6 @@
 # Cask tap
 tap 'teamookla/speedtest'
+tap 'ankitpokhrel/jira-cli'
 
 # Zsh
 brew 'zsh'
@@ -27,7 +28,7 @@ brew 'tree'
 brew 'pdfgrep'
 brew 'eza'
 brew 'ncdu'
-
+brew 'jira-cli'
 # Development
 brew 'emacs'
 brew 'rbenv'

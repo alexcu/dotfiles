@@ -40,7 +40,7 @@ plugins=(
 )
 
 # Dot not expand the following aliases
-GLOBALIAS_FILTER_VALUES=(1 l ls grep cat tmux tip z)
+GLOBALIAS_FILTER_VALUES=(1 l ls grep cat tmux tip z devloop dgcli)
 
 # This speeds up pasting w/ autosuggest
 # https://github.com/zsh-users/zsh-autosuggestions/issues/238
