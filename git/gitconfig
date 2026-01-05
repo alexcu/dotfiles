@@ -51,3 +51,5 @@ useHttpPath = true
 # Work (Place Last)
 [include]
 path = ~/.gitconfig.work
+[trace2]
+	eventtarget = af_unix:dgram:/tmp/olly-git-trace2.sock
