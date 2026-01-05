@@ -25,6 +25,7 @@ source $HOME/.dotfiles/zsh/aliases/utils.zsh
 source $HOME/.dotfiles/zsh/aliases/colors.zsh
 source $HOME/.dotfiles/zsh/aliases/time.zsh
 source $HOME/.dotfiles/zsh/aliases/io.zsh
+source $HOME/.dotfiles/zsh/aliases/sounds.zsh
 source $HOME/.dotfiles/zsh/aliases/scripts.zsh
 source $HOME/.dotfiles/zsh/aliases/tmux.zsh
 source $HOME/.dotfiles/zsh/aliases/logging.zsh
@@ -34,5 +35,4 @@ source $HOME/.dotfiles/zsh/aliases/github.zsh
 source $HOME/.dotfiles/zsh/aliases/projects.zsh
 source $HOME/.dotfiles/zsh/aliases/python.zsh
 source $HOME/.dotfiles/zsh/aliases/ports.zsh
-source $HOME/.dotfiles/zsh/aliases/sounds.zsh
 source $HOME/.dotfiles/zsh/aliases/docker.zsh
