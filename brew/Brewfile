@@ -26,15 +26,15 @@ brew 'git'
 brew 'pandoc'
 brew 'tree'
 brew 'pdfgrep'
+brew 'pdftotext'
 brew 'eza'
 brew 'ncdu'
-brew 'jira-cli'
+brew 'defaultbrowser'
+
 # Development
 brew 'emacs'
-brew 'rbenv'
 brew 'pyenv'
-brew 'ruby-build'
-cask 'visual-studio-code'
+cask 'cursor'
 
 # Work + Sync
 cask 'zoom'
@@ -47,7 +47,6 @@ cask 'itsycal'
 cask 'tiles'
 cask 'displaperture'
 cask 'hiddenbar'
-cask 'xbar'
 
 # Academic
 # cask 'mactex-no-gui'
@@ -65,3 +64,6 @@ cask 'firefox'
 cask 'notion'
 cask 'whatsapp'
 cask 'messenger'
+
+# Work
+brew 'jira-cli'
