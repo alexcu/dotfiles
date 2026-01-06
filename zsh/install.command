@@ -3,14 +3,14 @@
 set -e
 
 # Must install homebrew first...
-if [ -z "$(which brew)" ]; then
+if ! command -v brew >/dev/null 2>&1; then
   echo "Run .dotfiles/brew/install.command first..."
   exit 1
 fi
 
 # Checking for zsh...
 echo "Checking for zsh..."
-if which zsh >/dev/null 2>&1; then
+if command -v zsh >/dev/null 2>&1; then
   echo "zsh is installed"
 else
   echo "zsh is not installed. Installing it via brew..."
@@ -32,8 +32,8 @@ if [ -d "$HOME/.oh-my-zsh/custom/plugins/fzf-tab" ]; then
 else
   echo "fzf-tab is not installed. Installing it..."
   git clone https://github.com/Aloxaf/fzf-tab.git "$HOME/.oh-my-zsh/custom/plugins/fzf-tab"
-  if [ "$(uname)" == "Linux" ];
-      sudo apt install zsh-dev
+  if [ "$(uname)" = "Linux" ] && command -v apt-get >/dev/null 2>&1; then
+    sudo apt-get install -y zsh-dev
   fi
   # Required for building binary tab module
   brew install groff
@@ -49,19 +49,27 @@ fi
 
 # Make projects and llog directories
 echo "Making /usr/local/llog -> ~/.llog and /usr/local/projects -> ~/.proj"
-sudo -p mkdir /usr/local/llog
+sudo mkdir -p /usr/local/llog
 sudo chown "$USER" /usr/local/llog
-sudo -p mkdir /usr/local/projects
+sudo mkdir -p /usr/local/projects
 sudo chown "$USER" /usr/local/projects
-ln -s /usr/local/llog "$HOME/.llog"
-ln -s /usr/local/projects "$HOME/.proj"
+if [ -e "$HOME/.llog" ] && [ ! -L "$HOME/.llog" ]; then
+  echo "WARNING: $HOME/.llog exists and is not a symlink; skipping link"
+else
+  ln -nsf /usr/local/llog "$HOME/.llog"
+fi
+if [ -e "$HOME/.proj" ] && [ ! -L "$HOME/.proj" ]; then
+  echo "WARNING: $HOME/.proj exists and is not a symlink; skipping link"
+else
+  ln -nsf /usr/local/projects "$HOME/.proj"
+fi
 
 # Link it up
 echo "Linking .zshrc files..."
-BASEDIR=$(greadlink -f "$(dirname "$0")")
+BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 echo "  ./zshrc                 -> $HOME/.zshrc"
-echo "  ./zshrc.end.zsh -> $HOME/.zshrc.top.zsh"
-echo "  ./zshrc.top.zsh -> $HOME/.zshrc.end.zsh"
+echo "  ./zshrc.top.zsh         -> $HOME/.zshrc.top.zsh"
+echo "  ./zshrc.end.zsh         -> $HOME/.zshrc.end.zsh"
 echo "  ./zshrc.aliases.zsh     -> $HOME/.zshrc.aliases.zsh"
 echo "  ./zshrc.plugins.zsh     -> $HOME/.zshrc.plugins.zsh"
 echo "  ./zshrc.custom.zsh      -> $HOME/.zshrc.custom.zsh"
@@ -82,8 +90,8 @@ ln -nsf "$BASEDIR/fzf-preview.zsh" "$HOME/.zshrc.plugins.fzf-preview.zsh"
 # Lock down .zshrc for other scripts to butcher
 echo "Locking down .zshrc from future edits..."
 chmod 600 "$HOME/.zshrc"
-if [ "$(uname)" = "Dawrin" ]; then
-    sudo chflags uchg "$HOME/.zshrc"
+if [ "$(uname)" = "Darwin" ]; then
+  sudo chflags uchg "$HOME/.zshrc"
 fi
 
 # Need to build fzf-tab binary
@@ -94,7 +102,9 @@ fi
 echo "    build-fzf-tab-module"
 
 echo "Setting Zsh as default shell..."
-if [ "$(unname)" = "Linux" ]; then
-    sudo sh -c 'echo "/home/linuxbrew/.linuxbrew/bin/zsh" >> /etc/shells'
+ZSH_PATH="$(command -v zsh)"
+if [ -f /etc/shells ] && ! grep -qx "$ZSH_PATH" /etc/shells; then
+  echo "Adding $ZSH_PATH to /etc/shells..."
+  echo "$ZSH_PATH" | sudo tee -a /etc/shells >/dev/null
 fi
-chsh -s "$(which zsh)"
+chsh -s "$ZSH_PATH"

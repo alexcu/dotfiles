@@ -2,20 +2,15 @@
 
 set -e
 
-# Check if greadlink is installed
-if ! command -v greadlink >/dev/null 2>&1; then
-  echo "greadlink is not installed. Please install coreutils to proceed."
-  exit 1
-fi
+BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 
 # Check if the `emacs` file exists in the script's directory
-if [ ! -f "$(dirname "$0")/emacs" ]; then
+if [ ! -f "$BASEDIR/emacs" ]; then
   echo "The file './emacs' does not exist in the script's directory."
   exit 1
 fi
 
 echo "Linking ./emacs -> ~/.emacs"
-BASEDIR=$(greadlink -f "$(dirname "$0")")
 ln -nsf "$BASEDIR/emacs" ~/.emacs
 
 emacs --batch \

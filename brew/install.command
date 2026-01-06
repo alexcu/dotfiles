@@ -1,17 +1,40 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -e
 
+try_eval_brew_shellenv() {
+  if command -v brew >/dev/null 2>&1; then
+    eval "$(brew shellenv)"
+    return 0
+  fi
+
+  local candidate
+  for candidate in \
+    "/opt/homebrew/bin/brew" \
+    "/usr/local/bin/brew" \
+    "/home/linuxbrew/.linuxbrew/bin/brew" \
+    "$HOME/.linuxbrew/bin/brew"
+  do
+    if [ -x "$candidate" ]; then
+      eval "$("$candidate" shellenv)"
+      return 0
+    fi
+  done
+
+  return 1
+}
+
 # Check if Homebrew is installed
-if ! command -v brew >/dev/null 2>&1; then
+if ! try_eval_brew_shellenv >/dev/null 2>&1; then
   echo "Installing Homebrew..."
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   echo "Homebrew installed!"
-  if [ "$(uname -s)" == "Linux" ]; then
-    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-  fi
-else
-  echo "Homebrew is already installed."
+fi
+
+if ! try_eval_brew_shellenv >/dev/null 2>&1; then
+  echo "ERROR: Homebrew is installed but 'brew' is not on PATH."
+  echo "Try: eval \"\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)\""
+  exit 1
 fi
 
 # Check if coreutils is installed
@@ -23,16 +46,10 @@ else
   echo "coreutils is already installed."
 fi
 
-# Check if greadlink is installed
-if command -v greadlink >/dev/null 2>&1; then
-  echo "Linking ./Brewfile -> ~/.Brewfile..."
-  BASEDIR=$(greadlink -f "$(dirname "$0")")
-  ln -nsf "$BASEDIR/Brewfile" ~/.Brewfile
-  echo "Set up ~/.Brewfile!"
-else
-  echo "greadlink is not installed. Please install coreutils to proceed."
-  exit 1
-fi
+echo "Linking ./Brewfile -> ~/.Brewfile..."
+BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+ln -nsf "$BASEDIR/Brewfile" "$HOME/.Brewfile"
+echo "Set up ~/.Brewfile!"
 
 # Install apps from Brewfile
 echo "Installing [cask] apps from ~/.Brewfile..."

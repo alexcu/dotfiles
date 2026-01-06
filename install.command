@@ -2,6 +2,30 @@
 
 set -e
 
+BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+
+try_eval_brew_shellenv() {
+  if command -v brew >/dev/null 2>&1; then
+    eval "$(brew shellenv)"
+    return 0
+  fi
+
+  local candidate
+  for candidate in \
+    "/opt/homebrew/bin/brew" \
+    "/usr/local/bin/brew" \
+    "/home/linuxbrew/.linuxbrew/bin/brew" \
+    "$HOME/.linuxbrew/bin/brew"
+  do
+    if [ -x "$candidate" ]; then
+      eval "$("$candidate" shellenv)"
+      return 0
+    fi
+  done
+
+  return 1
+}
+
 # Function to install software from a directory
 install_from_directory() {
   local dir="$1"
@@ -18,24 +42,32 @@ install_from_directory() {
   fi
 
   echo "Installing from $dir..."
-  pushd "$dir" > /dev/null
-  ./"$script"
-  popd > /dev/null
+  (cd "$dir" > /dev/null && ./"$script")
 }
 
+# If brew exists but isn't on PATH yet, fix it before running anything else.
+try_eval_brew_shellenv >/dev/null 2>&1 || true
+
 # Homebrew
-install_from_directory "./brew" "install.command"
+install_from_directory "$BASEDIR/brew" "install.command"
+
+# Ensure brew is on PATH for subsequent install scripts (important on Linuxbrew).
+if ! try_eval_brew_shellenv >/dev/null 2>&1; then
+  echo "ERROR: Homebrew is installed but 'brew' is not on PATH."
+  echo "Try: eval \"\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)\""
+  exit 1
+fi
 
 # zsh
-install_from_directory "./zsh" "install.command"
+install_from_directory "$BASEDIR/zsh" "install.command"
 
 # git
-install_from_directory "./git" "install.command"
+install_from_directory "$BASEDIR/git" "install.command"
 
 # emacs
-install_from_directory "./emacs" "install.command"
+install_from_directory "$BASEDIR/emacs" "install.command"
 
 # tmux
-install_from_directory "./tmux" "install.command"
+install_from_directory "$BASEDIR/tmux" "install.command"
 
 echo "All installations completed successfully."
