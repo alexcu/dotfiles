@@ -26,10 +26,8 @@ brew 'git'
 brew 'pandoc'
 brew 'tree'
 brew 'pdfgrep'
-brew 'pdftotext'
 brew 'eza'
 brew 'ncdu'
-brew 'defaultbrowser'
 
 # Development
 brew 'emacs'
@@ -67,3 +65,9 @@ cask 'messenger'
 
 # Work
 brew 'jira-cli'
+
+# Only works on macOS
+if RUBY_PLATFORM.include?('darwin')
+  brew 'pdftotext'
+  brew 'defaultbrowser'
+end
