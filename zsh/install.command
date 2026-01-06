@@ -1,4 +1,4 @@
-package-install RET color-theme-sanityinc-tomorrow RET#!/usr/bin/env bash
+#!/usr/bin/env bash
 
 set -e
 

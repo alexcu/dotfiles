@@ -323,6 +323,7 @@ function Gwta() {
 }
 
 # # Precmd hook to refresh aliases based on the current branch every time the prompt is shown
+# # FIXME: This seems to slow stuff down a lot
 # function precmd() {
 #     local branch_name="$(gbn)"
 
