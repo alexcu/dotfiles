@@ -67,6 +67,18 @@ fi
 # Link it up
 echo "Linking .zshrc files..."
 BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+DOTFILES_DIR="$(cd "$BASEDIR/.." && pwd -P)"
+DOTFILES_LINK="$HOME/.dotfiles"
+if [ -L "$DOTFILES_LINK" ] || [ ! -e "$DOTFILES_LINK" ]; then
+  ln -nsf "$DOTFILES_DIR" "$DOTFILES_LINK"
+elif [ -d "$DOTFILES_LINK" ]; then
+  existing_real="$(cd "$DOTFILES_LINK" && pwd -P)"
+  if [ "$existing_real" != "$DOTFILES_DIR" ]; then
+    echo "WARNING: $DOTFILES_LINK exists and is a directory; expected it to point to $DOTFILES_DIR"
+  fi
+else
+  echo "WARNING: $DOTFILES_LINK exists and is not a directory/symlink; skipping link"
+fi
 echo "  ./zshrc                 -> $HOME/.zshrc"
 echo "  ./zshrc.top.zsh         -> $HOME/.zshrc.top.zsh"
 echo "  ./zshrc.end.zsh         -> $HOME/.zshrc.end.zsh"

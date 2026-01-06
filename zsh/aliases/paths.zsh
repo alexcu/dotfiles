@@ -6,7 +6,7 @@
 
 # Common HOME paths
 export HOME_DESKTOP="$HOME/Desktop"
-export HOME_DOTFILES="$HOME/.dotfiles"
+export HOME_DOTFILES="${HOME_DOTFILES:-$HOME/.dotfiles}"
 export HOME_WORK_DOTFILES="$HOME/.zshrc.work.zsh"
 export HOME_DOWNLOADS="$HOME/Downloads"
 export HOME_REPOS="$HOME/repos"

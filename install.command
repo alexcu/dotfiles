@@ -4,6 +4,18 @@ set -e
 
 BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 
+DOTFILES_LINK="$HOME/.dotfiles"
+if [ -L "$DOTFILES_LINK" ] || [ ! -e "$DOTFILES_LINK" ]; then
+  ln -nsf "$BASEDIR" "$DOTFILES_LINK"
+elif [ -d "$DOTFILES_LINK" ]; then
+  existing_real="$(cd "$DOTFILES_LINK" && pwd -P)"
+  if [ "$existing_real" != "$BASEDIR" ]; then
+    echo "WARNING: $DOTFILES_LINK exists and is a directory; expected it to point to $BASEDIR"
+  fi
+else
+  echo "WARNING: $DOTFILES_LINK exists and is not a directory/symlink; skipping link"
+fi
+
 try_eval_brew_shellenv() {
   if command -v brew >/dev/null 2>&1; then
     eval "$(brew shellenv)"

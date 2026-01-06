@@ -4,6 +4,14 @@
 # Personal aliases, functions, and exports
 #
 
+# Resolve alias directory from this file's location (works even when sourced via symlink).
+_DOTFILES_ALIASES_FILE="${${(%):-%N}:A}"
+_DOTFILES_ZSH_DIR="${_DOTFILES_ALIASES_FILE:h}"
+_DOTFILES_ALIAS_DIR="${_DOTFILES_ZSH_DIR}/aliases"
+
+# Export dotfiles root for other scripts/aliases (can be overridden by env).
+export HOME_DOTFILES="${HOME_DOTFILES:-${_DOTFILES_ZSH_DIR:h}}"
+
 # SETUP: Undefines pre-existing aliases or functions for redefinition of work-related stuff
 function undef() {
   local original_name="$1"
@@ -19,20 +27,20 @@ function undef() {
 }
 
 # Alias imports (order is important!)
-source $HOME/.dotfiles/zsh/aliases/paths.zsh
-source $HOME/.dotfiles/zsh/aliases/config.zsh
-source $HOME/.dotfiles/zsh/aliases/utils.zsh
-source $HOME/.dotfiles/zsh/aliases/colors.zsh
-source $HOME/.dotfiles/zsh/aliases/time.zsh
-source $HOME/.dotfiles/zsh/aliases/io.zsh
-source $HOME/.dotfiles/zsh/aliases/sounds.zsh
-source $HOME/.dotfiles/zsh/aliases/scripts.zsh
-source $HOME/.dotfiles/zsh/aliases/tmux.zsh
-source $HOME/.dotfiles/zsh/aliases/logging.zsh
-source $HOME/.dotfiles/zsh/aliases/git.zsh
-source $HOME/.dotfiles/zsh/aliases/git-pr-train.zsh
-source $HOME/.dotfiles/zsh/aliases/github.zsh
-source $HOME/.dotfiles/zsh/aliases/projects.zsh
-source $HOME/.dotfiles/zsh/aliases/python.zsh
-source $HOME/.dotfiles/zsh/aliases/ports.zsh
-source $HOME/.dotfiles/zsh/aliases/docker.zsh
+source "${_DOTFILES_ALIAS_DIR}/paths.zsh"
+source "${_DOTFILES_ALIAS_DIR}/config.zsh"
+source "${_DOTFILES_ALIAS_DIR}/utils.zsh"
+source "${_DOTFILES_ALIAS_DIR}/colors.zsh"
+source "${_DOTFILES_ALIAS_DIR}/time.zsh"
+source "${_DOTFILES_ALIAS_DIR}/io.zsh"
+source "${_DOTFILES_ALIAS_DIR}/sounds.zsh"
+source "${_DOTFILES_ALIAS_DIR}/scripts.zsh"
+source "${_DOTFILES_ALIAS_DIR}/tmux.zsh"
+source "${_DOTFILES_ALIAS_DIR}/logging.zsh"
+source "${_DOTFILES_ALIAS_DIR}/git.zsh"
+source "${_DOTFILES_ALIAS_DIR}/git-pr-train.zsh"
+source "${_DOTFILES_ALIAS_DIR}/github.zsh"
+source "${_DOTFILES_ALIAS_DIR}/projects.zsh"
+source "${_DOTFILES_ALIAS_DIR}/python.zsh"
+source "${_DOTFILES_ALIAS_DIR}/ports.zsh"
+source "${_DOTFILES_ALIAS_DIR}/docker.zsh"
