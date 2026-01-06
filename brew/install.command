@@ -23,15 +23,6 @@ else
   echo "coreutils is already installed."
 fi
 
-# Check if Homebrew Bundle is tapped
-if ! brew tap-info | grep -q 'homebrew/bundle'; then
-  echo "Installing Homebrew Bundle..."
-  brew tap Homebrew/bundle
-  echo "Homebrew Bundle installed!"
-else
-  echo "Homebrew Bundle is already tapped."
-fi
-
 # Check if greadlink is installed
 if command -v greadlink >/dev/null 2>&1; then
   echo "Linking ./Brewfile -> ~/.Brewfile..."
