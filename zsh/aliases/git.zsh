@@ -322,71 +322,71 @@ function Gwta() {
     echo "  3. Reapply sparse checkout to sync correctly (git sparse-checkout reapply)"
 }
 
-# Precmd hook to refresh aliases based on the current branch every time the prompt is shown
-function precmd() {
-    local branch_name="$(gbn)"
+# # Precmd hook to refresh aliases based on the current branch every time the prompt is shown
+# function precmd() {
+#     local branch_name="$(gbn)"
 
-    if [[ -n $branch_name ]]; then
-        # Set up new aliases
-        alias gbcn="git branch --copy $branch_name"
-        alias gbct="git branch --copy $branch_name _tmp_$branch_name"
-        alias gbcz="git branch --copy $branch_name z/$branch_name"
-        alias gbmn="git branch --move $branch_name"
-        alias gbmt="git branch --move $branch_name _tmp/$branch_name"
-	    alias gwtA="git worktree add $HOME_GIT_WORKTREES/$(basename $(git rev-parse --show-toplevel))/$branch_name $branch_name"
+#     if [[ -n $branch_name ]]; then
+#         # Set up new aliases
+#         alias gbcn="git branch --copy $branch_name"
+#         alias gbct="git branch --copy $branch_name _tmp_$branch_name"
+#         alias gbcz="git branch --copy $branch_name z/$branch_name"
+#         alias gbmn="git branch --move $branch_name"
+#         alias gbmt="git branch --move $branch_name _tmp/$branch_name"
+# 	    alias gwtA="git worktree add $HOME_GIT_WORKTREES/$(basename $(git rev-parse --show-toplevel))/$branch_name $branch_name"
 
-        function gbmz() {uo pipefail
-            local b
-            if [[ $# -gt 0 ]]; then
-                b="$1"
-            else
-                b="$(git rev-parse --abbrev-ref HEAD)"
-                if [[ "$b" == "HEAD" ]]; then
-                echo "Detached HEAD; please specify a branch name." >&2
-                return 1
-                fi
-            fi
+#         function gbmz() {uo pipefail
+#             local b
+#             if [[ $# -gt 0 ]]; then
+#                 b="$1"
+#             else
+#                 b="$(git rev-parse --abbrev-ref HEAD)"
+#                 if [[ "$b" == "HEAD" ]]; then
+#                 echo "Detached HEAD; please specify a branch name." >&2
+#                 return 1
+#                 fi
+#             fi
 
-            # Protect common primary branches
-            if [[ "$b" == "main" || "$b" == "master" || "$b" == "develop" ]]; then
-                echo "Refusing to archive protected branch: $b" >&2
-                return 1
-            fi
+#             # Protect common primary branches
+#             if [[ "$b" == "main" || "$b" == "master" || "$b" == "develop" ]]; then
+#                 echo "Refusing to archive protected branch: $b" >&2
+#                 return 1
+#             fi
 
-            echo "Archiving $b -> refs/archive/z/$b ..."
-            git update-ref "refs/archive/z/$b" "$b"
-            git branch -D "$b"
-            echo "Archived. To restore: git branch \"$b\" \"refs/archive/z/$b\""
-        }
+#             echo "Archiving $b -> refs/archive/z/$b ..."
+#             git update-ref "refs/archive/z/$b" "$b"
+#             git branch -D "$b"
+#             echo "Archived. To restore: git branch \"$b\" \"refs/archive/z/$b\""
+#         }
 
-        # # Worktree check
-        # if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-        #     local worktree=$(basename "$(git rev-parse --show-toplevel)")
-        #     local worktree_target_branch="${branch_name}-${worktree}"
-        #     if [[ $(git branch --list "$worktree_target_branch") && "$branch_name" != "$worktree_target_branch" ]]; then
-        #         echo "Assuming $worktree_target instead of $branch_name"
-        #         echo "Press ^C now to abort fetch and rebase..."
+#         # # Worktree check
+#         # if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+#         #     local worktree=$(basename "$(git rev-parse --show-toplevel)")
+#         #     local worktree_target_branch="${branch_name}-${worktree}"
+#         #     if [[ $(git branch --list "$worktree_target_branch") && "$branch_name" != "$worktree_target_branch" ]]; then
+#         #         echo "Assuming $worktree_target instead of $branch_name"
+#         #         echo "Press ^C now to abort fetch and rebase..."
 
-        #         echo "(1/5) Checking out $worktree_target_branch..."
-        #         git checkout $worktree_target_branch || { echo "Error checking out $worktree_target_branch!" >&2; return 1 }
+#         #         echo "(1/5) Checking out $worktree_target_branch..."
+#         #         git checkout $worktree_target_branch || { echo "Error checking out $worktree_target_branch!" >&2; return 1 }
 
-        #         echo "(2/5) Fetching origin $branch_name..."
-        #         git fetch origin $branch_name || { echo "Error fetching origin $branch_name!" >&2; return 1 }
+#         #         echo "(2/5) Fetching origin $branch_name..."
+#         #         git fetch origin $branch_name || { echo "Error fetching origin $branch_name!" >&2; return 1 }
 
-        #         echo "(3/5) Rebasing origin/$branch_name..."
-        #         git rebase origin/$branch_name || { echo "Error rebasing origin/$branch_name!" >&2; return 1 }
+#         #         echo "(3/5) Rebasing origin/$branch_name..."
+#         #         git rebase origin/$branch_name || { echo "Error rebasing origin/$branch_name!" >&2; return 1 }
 
-        #         echo "(4/5) Reapplying sparse checkout..."
-        #         git sparse-checkout reapply || { echo "Error reapplying sparse checkout!" >&2; return 1 }
+#         #         echo "(4/5) Reapplying sparse checkout..."
+#         #         git sparse-checkout reapply || { echo "Error reapplying sparse checkout!" >&2; return 1 }
 
-        #         echo "(5/5) Checking out $worktree_target_branch..."
-        #         git checkout $worktree_target_branch || { echo "Error checking out $worktree_target_branch!" >&2; return 1 }
-        #     fi
-        # fi
-    else
-        unalias gbcn gbct gbcz gbmn gbmt gbmz gwta 2>/dev/null
-    fi
-}
+#         #         echo "(5/5) Checking out $worktree_target_branch..."
+#         #         git checkout $worktree_target_branch || { echo "Error checking out $worktree_target_branch!" >&2; return 1 }
+#         #     fi
+#         # fi
+#     else
+#         unalias gbcn gbct gbcz gbmn gbmt gbmz gwta 2>/dev/null
+#     fi
+# }
 
 # Cleanup all z/ branches -> refs/archive/z/*
 function gbmzcleanup() {uo pipefail

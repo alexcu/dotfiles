@@ -47,8 +47,13 @@ function gprtt() {
 
 # Git PR Train update approval titles
 function _gprtp_update_approval_title() {
-    local branch=$1
-    local update_title=$2
+    local branch="${1:-$(gbn)}"
+    local update_title="${2:-yes}"
+
+    if [[ -z "$branch" ]]; then
+        echo "usage: _gprtp_update_approval_title [branch] [yes|no]" >&2
+        return 1
+    fi
 
     local pr_info
     pr_info=$(gh pr view "$branch" --json title,reviewDecision,isDraft \
@@ -80,7 +85,38 @@ function _gprtp_update_approval_title() {
         gh pr edit "$branch" --title "$expected_title" > /dev/null || return 1
     fi
 
-    cecho white dim "  -> $branch${tick_suffix}"
+    if [[ "$should_tick" == true ]]; then
+        cecho green "  -> $branch${tick_suffix}"
+    else
+        cecho white "  -> $branch${tick_suffix}"
+    fi
+}
+
+function _gprtp_assign_if_not_approved() {
+    local branch=$1
+    shift
+
+    local pr_info
+    pr_info=$(ASSIGNEE_LOGIN="$USER" gh pr view "$branch" --json reviewDecision,isDraft,assignees \
+        -q '[.reviewDecision // "", (.isDraft | tostring), (([.assignees[].login] | index(env.ASSIGNEE_LOGIN)) != null | tostring)] | @tsv') || return 1
+
+    local review_decision is_draft_str is_assigned_str
+    review_decision="${pr_info%%$'\t'*}"
+    local rest="${pr_info#*$'\t'}"
+    is_draft_str="${rest%%$'\t'*}"
+    is_assigned_str="${rest#*$'\t'}"
+
+    if [[ "$is_draft_str" != "true" && "$review_decision" == "APPROVED" ]]; then
+        cecho green "  -> already approved"
+        return 0
+    fi
+
+    if [[ "$is_assigned_str" == "true" ]]; then
+        cecho blue "  -> already assigned"
+        return 0
+    fi
+
+    ghpra "$branch" "$@"
 }
 
 # Git PR Train push and create/update PRs
@@ -142,7 +178,7 @@ function gprtp() {
         fi
     fi
 
-    cecho blue dim "🏗️ 🚂 Pushing and creating/updating PRs..."
+    cecho cyan "🏗️ 🚂 Pushing and creating/updating PRs..."
     printf "%s\ny\n" "$combined_title" | git pr-train --push --create-prs --draft
     local push_exit=$?
     echo
@@ -151,13 +187,11 @@ function gprtp() {
         return $push_exit
     fi
 
-    cecho blue dim "📌 🚂 Assigning these PRs to you..."
-    _gprtllfn ghpra --force
+    echo
+    cecho cyan "📌 🚂 Assigning unapproved PRs to you..."
+    creset
+    _gprtllfn _gprtp_assign_if_not_approved --force
     local assign_exit=$?
-
-    cecho blue dim "👀 🚂 Checking approvals..."
-    _gprtllfn _gprtp_update_approval_title "$update_title"
-    local approval_exit=$?
 
     local overall_exit=$assign_exit
     if (( overall_exit == 0 )); then
@@ -378,7 +412,7 @@ function _gprtllfn() {
         if [[ "$show_progress" == true ]]; then
             _gprtllfn_print_progress "$branch_index"
         else
-            cecho white dim "🚂 [$branch_index/$max_index]: $branch"
+            cecho white bold "🚂 [$branch_index/$max_index]: $branch"
         fi
 
         if [[ "$checkout" == true ]]; then
@@ -423,17 +457,22 @@ function _gprtllfn() {
     fi
 }
 
+# Select and cycle through branches in PR train
+function gprtls() {
+    gprtll | fzf --prompt "🚂 Select PR Train branch: " --cycle | xargs echo | tr '\n' ' '
+}
+
 # Git PR Train List (git pr-train --list is too slow, so use fzf)
 function gprtl() {
-    gprtll | fzf --prompt "🚂 Checkout PR Train branch: " | xargs git checkout
+    gprtll | fzf --prompt "🚂 Checkout PR Train branch: " --cycle | xargs git checkout
 }
 
 # Git PR Train push branch
 function gprtpp() {
-    gprtll | fzf | xargs git push origin
+    gprtll | fzf --prompt "🚂 Push PR Train branch(s): " --cycle --multi | xargs git push origin
 }
 
-# Git PR Train push all branches
+# Git PR Train push all branches without running all git pr-train fluff
 function gprtppa() {
     _gprtllfn git push origin
 }
@@ -594,7 +633,6 @@ function gprt\!() {
   fi
 
   if [[ "$(gbn)" != "$start_branch" ]]; then
-    cecho magenta dim "🚂💨 Switching to start branch: $start_branch"
     if ! git checkout "$start_branch"; then
       cecho red "🚫🚂 Unable to switch to start branch"
       return 1
