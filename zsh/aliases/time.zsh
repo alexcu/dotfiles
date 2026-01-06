@@ -17,7 +17,7 @@ alias tsx="date +'%Y-%m-%d %H:%M:%S.%3N'"
 alias tsc="date +%Y%m%dT%H%M%S"
 
 # Timestamp identifier suffixed with word-based identifier
-alias tsid="echo $(tsc)_$(w3w)"
+alias tsid='echo "$(tsc)_$(w3w)"'
 
 # Unix timestamp: 1734312008
 alias tsu="date +%s"
@@ -29,10 +29,10 @@ alias dsh="date +%F"
 alias dsc="date +%Y%m%d"
 
 # Datestamp prefix with user and date (short)
-alias dscp="$USER-$(date +%Y%m%d)-"
+alias dscp='echo "$USER-$(date +%Y%m%d)-"'
 
 # Date identifier suffixed with word-based identifier
-alias dsid="echo $(dsc)_$(w3w)"
+alias dsid='echo "$(dsc)_$(w3w)"'
 
 # Quickly get days until something
 function daysuntil() {

@@ -32,7 +32,7 @@ alias gc="git commit --message \""
 alias gC="git commit"
 
 # Git Checkout new Branch with user and date prefix (alexcu-20260105-foo)
-alias gcb="git checkout -b $USER-$(dsc)-"
+alias gcb='git checkout -b $USER-$(dsc)-'
 
 # Git Checkout new Branch from ORigin branch (e.g., master or main)
 alias gcbor="(gco master || gco main) && gpor && gcb $1"

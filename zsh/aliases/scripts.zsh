@@ -5,9 +5,10 @@
 #
 
 # Prefix all executable scripts in $HOME_SCRIPTS with 'scr_'
-for script in $HOME_SCRIPTS/*; do
-    if [[ -f $script && -x $script ]]; then
-        filename=$(basename "$script")
-        alias "scr_$filename"="$script"
-    fi
-done
+if [[ -d "$HOME_SCRIPTS" ]]; then
+    for script in "$HOME_SCRIPTS"/*(N); do
+        [[ -f "$script" && -x "$script" ]] || continue
+        filename="${script:t}"
+        alias "scr_${filename}"="$script"
+    done
+fi

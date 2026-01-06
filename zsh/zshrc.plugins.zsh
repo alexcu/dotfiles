@@ -13,9 +13,43 @@ else
 fi
 
 #
-# Source Custom Plugins
+# fzf-tab: avoid interactive "rebuild module now?" prompts on machines without a working module build toolchain.
+# If an existing compiled module is present but can't be loaded (or is out of date), disable it so fzf-tab still works.
 #
-source $ZSH_CUSTOM/plugins/fzf-tab/fzf-tab.plugin.zsh
+# NOTE: this runs before oh-my-zsh loads plugins (see `zshrc.zsh`), so it can prevent startup prompts.
+if [[ -d "$ZSH_CUSTOM/plugins/fzf-tab" ]]; then
+  () {
+    emulate -L zsh -o extended_glob
+    local _ftb_home="$ZSH_CUSTOM/plugins/fzf-tab"
+    local _ftb_mods=($_ftb_home/modules/Src/aloxaf/fzftab.(so|bundle)(N))
+
+    if (( ${#_ftb_mods} )); then
+      local _ftb_expected_version
+      if [[ -f "$_ftb_home/fzf-tab.zsh" ]]; then
+        _ftb_expected_version="$(sed -nE 's/.*FZF_TAB_MODULE_VERSION != \"([^\"]+)\".*/\1/p' "$_ftb_home/fzf-tab.zsh" | head -n1)"
+      fi
+
+      local _ftb_orig_module_path=($module_path)
+      module_path+=("$_ftb_home/modules/Src")
+
+      local _ftb_disable_module=false
+      if ! zmodload aloxaf/fzftab 2>/dev/null; then
+        _ftb_disable_module=true
+      elif [[ -n "$_ftb_expected_version" && "${FZF_TAB_MODULE_VERSION:-}" != "$_ftb_expected_version" ]]; then
+        _ftb_disable_module=true
+      fi
+
+      zmodload -u aloxaf/fzftab 2>/dev/null || true
+      module_path=($_ftb_orig_module_path)
+
+      if [[ $_ftb_disable_module == true ]]; then
+        for _ftb_mod in $_ftb_mods; do
+          mv -f "$_ftb_mod" "${_ftb_mod}.disabled" 2>/dev/null || true
+        done
+      fi
+    fi
+  }
+fi
 
 #
 # Enabled zsh plugins

@@ -9,22 +9,60 @@ alias a="als"
 
 # What3Words-like identifier to use for unique identifiers
 function w3w() {
-    # Get random words from the dictionary
-    wordlist="/usr/share/dict/words"
+    local wordlist=""
+    local candidate=""
+    for candidate in "${WORDLIST:-}" "/usr/share/dict/words" "/usr/dict/words" "/usr/share/dict/web2"; do
+        if [[ -n "$candidate" && -f "$candidate" ]]; then
+            wordlist="$candidate"
+            break
+        fi
+    done
+
+    if [[ -z "$wordlist" ]]; then
+        echo "w3w: no wordlist found (set WORDLIST or install one, e.g. 'wamerican'/'words')" >&2
+        return 1
+    fi
+
+    local shuf_cmd=""
+    if command -v shuf >/dev/null 2>&1; then
+        shuf_cmd="shuf"
+    elif command -v gshuf >/dev/null 2>&1; then
+        shuf_cmd="gshuf"
+    elif command -v python3 >/dev/null 2>&1; then
+        WORDLIST_FILE="$wordlist" python3 - <<'PY'
+import os, random, re, sys
+path = os.environ.get("WORDLIST_FILE")
+if not path:
+    sys.exit(1)
+with open(path, "r", errors="ignore") as f:
+    words = [w.strip().lower() for w in f if re.fullmatch(r"[A-Za-z]{3}", w.strip())]
+if not words:
+    sys.exit(1)
+print("-".join(random.choice(words) for _ in range(3)))
+PY
+        return $?
+    else
+        echo "w3w: need one of shuf, gshuf, or python3" >&2
+        return 1
+    fi
 
     # Filter the word list to include words that are exactly 3 characters long
-    filtered_wordlist=$(grep -E '^[a-zA-Z]{3}$' $wordlist)
+    filtered_wordlist=$(grep -E '^[a-zA-Z]{3}$' "$wordlist" 2>/dev/null || true)
+    if [[ -z "$filtered_wordlist" ]]; then
+        echo "w3w: no 3-letter words found in $wordlist" >&2
+        return 1
+    fi
 
     # Function to find three words of exactly 3 characters
-    word1=$(echo "$filtered_wordlist" | shuf -n 1 | tr '[:upper:]' '[:lower:]')
-    word2=$(echo "$filtered_wordlist" | shuf -n 1 | tr '[:upper:]' '[:lower:]')
-    word3=$(echo "$filtered_wordlist" | shuf -n 1 | tr '[:upper:]' '[:lower:]')
+    word1=$(echo "$filtered_wordlist" | "$shuf_cmd" -n 1 | tr '[:upper:]' '[:lower:]')
+    word2=$(echo "$filtered_wordlist" | "$shuf_cmd" -n 1 | tr '[:upper:]' '[:lower:]')
+    word3=$(echo "$filtered_wordlist" | "$shuf_cmd" -n 1 | tr '[:upper:]' '[:lower:]')
 
     # Combine the words with dots
     random_identifier="${word1}-${word2}-${word3}"
 
     # Output the identifier
-    echo $random_identifier
+    echo "$random_identifier"
 }
 
 # Vscode

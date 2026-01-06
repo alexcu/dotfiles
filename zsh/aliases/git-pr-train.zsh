@@ -24,7 +24,15 @@ function _find_pr_train_config_file() {
 }
 
 # Git PR Train Config editor
-alias gprtc="$EDITOR $(_find_pr_train_config_file)"
+function gprtc() {
+    local cfg_file
+    cfg_file="$(_find_pr_train_config_file)" || {
+        echo "gprtc: no $PR_TRAIN_FILENAME found in this directory tree" >&2
+        return 1
+    }
+    local editor="${EDITOR:-vi}"
+    $=editor "$cfg_file"
+}
 
 # Git PR Train (main function)
 function gprt() {
