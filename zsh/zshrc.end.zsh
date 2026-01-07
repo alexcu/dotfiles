@@ -15,5 +15,11 @@ export PATH=$PATH:$HOME/.local/bin
 #
 
 # Ensure any default git completions are loaded first
-source $HOMEBREW_PREFIX/share/zsh/functions/_git
+if [[ -n "${HOMEBREW_PREFIX:-}" ]]; then
+  if [[ -f "$HOMEBREW_PREFIX/share/zsh/functions/_git" ]]; then
+    source "$HOMEBREW_PREFIX/share/zsh/functions/_git"
+  elif [[ -f "$HOMEBREW_PREFIX/share/zsh/site-functions/_git" ]]; then
+    source "$HOMEBREW_PREFIX/share/zsh/site-functions/_git"
+  fi
+fi
 source $ZSH_CUSTOM/plugins/fzf-git/fzf-git.sh
