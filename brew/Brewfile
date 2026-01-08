@@ -23,6 +23,7 @@ brew 'tmuxp'
 # Tools
 brew 'coreutils'
 brew 'git'
+brew 'gh'
 brew 'pandoc'
 brew 'tree'
 brew 'pdfgrep'
