@@ -322,6 +322,12 @@ function Gwta() {
     echo "  3. Reapply sparse checkout to sync correctly (git sparse-checkout reapply)"
 }
 
+#         alias gbcn="git branch --copy $branch_name"
+#         alias gbct="git branch --copy $branch_name _tmp_$branch_name"
+#         alias gbcz="git branch --copy $branch_name z/$branch_name"
+#         alias gbmn="git branch --move $branch_name"
+#         alias gbmt="git branch --move $branch_name _tmp/$branch_name"
+
 # # Precmd hook to refresh aliases based on the current branch every time the prompt is shown
 # # FIXME: This seems to slow stuff down a lot
 # function precmd() {
@@ -329,11 +335,6 @@ function Gwta() {
 
 #     if [[ -n $branch_name ]]; then
 #         # Set up new aliases
-#         alias gbcn="git branch --copy $branch_name"
-#         alias gbct="git branch --copy $branch_name _tmp_$branch_name"
-#         alias gbcz="git branch --copy $branch_name z/$branch_name"
-#         alias gbmn="git branch --move $branch_name"
-#         alias gbmt="git branch --move $branch_name _tmp/$branch_name"
 # 	    alias gwtA="git worktree add $HOME_GIT_WORKTREES/$(basename $(git rev-parse --show-toplevel))/$branch_name $branch_name"
 
 #         function gbmz() {uo pipefail

@@ -51,5 +51,10 @@ useHttpPath = true
 # Work (Place Last)
 [include]
 path = ~/.gitconfig.work
-[trace2]
-	eventtarget = af_unix:dgram:/tmp/olly-git-trace2.sock
+[maintenance]
+	repo = /Users/alexcu/work/dlelib-external-example
+	repo = /Users/alexcu/work/canva-full
+	repo = /Users/alexcu/work/canva-sparse
+[cg "telemetry"]
+	enabled = true
+	environment = canva-macos

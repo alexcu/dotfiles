@@ -144,3 +144,96 @@ alias bn="basename"
 alias db="defaultbrowser"
 alias dbs="defaultbrowser safari"
 alias dba="defaultbrowser browser" # Arc
+
+# Watch
+alias w="watch"
+alias doit="watch -n 1 --"
+
+# Claude (non-npm)
+alias claude="$HOME/.claude/local/claude"
+
+# Confirm before quitting ncdu always
+alias ncdu="ncdu --confirm-quit"
+
+
+# Keep clamshell mode alive.
+function clamshell() {
+    local force=""
+    if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+        echo "Usage: clamshell [-f] [seconds]"
+        echo "Keep the system awake, even with the lid shut."
+        echo "The display still sleeps on its timer and blanks on lid close."
+        echo "  -f: allow on battery"
+        echo "  seconds: auto-stop after seconds"
+        return 0
+    fi
+    if [[ "$1" == "-f" || "$1" == "--force" ]]; then
+        force=1
+        shift
+    fi
+    local duration="${1:-}"
+    if [[ -n "$duration" && "$duration" != <-> ]]; then
+        echo "clamshell: duration must be in seconds, got '$duration'" >&2
+        return 1
+    fi
+
+    if [[ -z "$force" ]] && ! pmset -g batt | grep -q "AC Power"; then
+        echo "clamshell: on battery, refusing to disable sleep (-f to override)" >&2
+        return 1
+    fi
+
+    sudo pmset -a disablesleep 1 || return 1
+
+    sudo -b sh -c '
+        trap "" HUP
+        prior_sleeps=$(pmset -g log | grep -c "Entering Sleep state")
+        on_battery_secs=0
+        elapsed=0
+        prev_lid=0
+        while pmset -g | grep -qE "SleepDisabled[[:space:]]+1" \
+            && kill -0 "$1" 2>/dev/null \
+            && [ "$on_battery_secs" -lt 60 ] \
+            && { [ -z "$2" ] || [ "$elapsed" -lt "$2" ]; }; do
+            sleep 5
+            elapsed=$((elapsed + 5))
+            if [ -n "$3" ] || pmset -g batt | grep -q "AC Power"; then
+                on_battery_secs=0
+            else
+                on_battery_secs=$((on_battery_secs + 5))
+            fi
+            if ioreg -r -k AppleClamshellState -d 1 \
+                | grep -q "AppleClamshellState. = Yes"; then
+                lid=1
+            else
+                lid=0
+            fi
+            if [ "$lid" = 1 ] && [ "$prev_lid" = 0 ]; then
+                pmset displaysleepnow
+            fi
+            prev_lid=$lid
+        done
+        # Announce before re-enabling sleep: say blocks until playback
+        # finishes, and the machine may sleep as soon as disablesleep is 0.
+        # Respects mute: no announcement when output is muted.
+        if [ "$on_battery_secs" -ge 60 ]; then
+            say -v Fred "Computer going to sleep"
+        fi
+        pmset -a disablesleep 0
+        pkill -P "$1" caffeinate 2>/dev/null
+        sleep 15
+        pmset -g log | grep "Entering Sleep state" \
+            | tail -n +$((prior_sleeps + 1)) | sed "s/^/clamshell: slept at /"
+    ' clamshell-watchdog $$ "$duration" "$force" 2>/dev/null
+
+    trap 'sudo pmset -a disablesleep 0' EXIT INT TERM
+    if [[ -n "$duration" ]]; then
+        caffeinate -i -t "$duration"
+    else
+        caffeinate -i
+    fi
+}
+
+# Blep logs
+function bslogs() {
+    ssh alex@blepserve "/usr/bin/log stream --style compact --predicate 'eventMessage CONTAINS[c] \"network\"'"
+}

@@ -35,6 +35,7 @@
     #os_icon                 # os identifier
     dir                     # current directory
     vcs                     # git status
+    git_branch_fallback     # branch name where gitstatusd can't read the repo (worktreeConfig)
     # =========================[ Line #2 ]=========================
     newline                 # \n
     prompt_char             # prompt symbol
@@ -1669,6 +1670,18 @@
     # instant_prompt_example. This will give us the same `example` prompt segment in the instant
     # and regular prompts.
     prompt_example
+  }
+
+  # gitstatusd bundles an old libgit2 that rejects extensions.worktreeConfig, which git
+  # auto-enables for sparse-checkout worktrees (romkatv/powerlevel10k#816, wontfix).
+  # The vcs segment renders nothing in those repos, so show the bare branch name instead.
+  typeset -g POWERLEVEL9K_GIT_BRANCH_FALLBACK_PREFIX='%fon '
+  function prompt_git_branch_fallback() {
+    [[ $(command git config --local extensions.worktreeConfig 2>/dev/null) == (true|True) ]] || return
+    local branch
+    branch=$(command git branch --show-current 2>/dev/null)
+    [[ -n $branch ]] || branch=$(command git rev-parse --short HEAD 2>/dev/null) || return
+    p10k segment -f 76 -i $'\uF126' -t "${branch//\%/%%}"
   }
 
   # User-defined prompt segments can be customized the same way as built-in segments.

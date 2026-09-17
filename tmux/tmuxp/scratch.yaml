@@ -4,12 +4,78 @@ global_options:
   automatic-rename: off
 
 windows:
-  - window_name: ''
-    layout: even-horizontal
+  # Home (:1)
+  - window_name: 🏠 Home
     focus: true
+    layout: main-horizontal
+    options:
+      main-pane-height: 50%
+    environment:
+      START_DIR: ${HOME}
     panes:
-    - shell_command:
-        - " tip! scratch:1.1 htop"
-        - htop 
-    - shell_command:
-        - " tip! scratch:1.2"
+      # Home (:1.1)
+      - focus: true
+        shell_command:
+          - tip! scratch:1.1 '🏠 Home' && cds
+      # Desktop (:1.2)
+      - environment:
+          START_DIR: ${HOME_DESKTOP}
+        shell_command:
+          - tip! scratch:1.2 '📂 Desktop' && cds
+
+
+  # Repos (:2)
+  - window_name: 📦 Repos
+    focus: false
+    layout: main-horizontal
+    options:
+      main-pane-height: 50%
+    panes:
+    # lebensmittel (:2.1)
+    - focus: true
+      environment:
+        START_DIR: ${HOME_REPOS}
+      shell_command:
+        - tip! scratch:2.1 '🛒 Repos' && cds
+    # flightscan (:2.2)
+    - environment:
+        START_DIR: ${HOME_REPOS}/personal/flightscan
+      shell_command:
+        - tip! scratch:2.2 '✈️ flightscan' && cds
+
+  # Claude (:3)
+  - window_name: 🤖 Claude
+    focus: false
+    environment:
+      START_DIR: ${HOME_REPOS}/personal
+    panes:
+      - focus: true
+        shell_command:
+          - tip! scratch:3.1 '🤖 Claude' && cds
+          - claude
+
+  # Utils (:4)
+  - window_name: 🚀 Utils
+    focus: false
+    layout: main-horizontal
+    options:
+      main-pane-height: 75%
+    panes:
+      # ncdu (:4.1)
+      - focus: true
+        shell_command:
+          - tip! scratch:4.2 '🧹 ncdu' && cds
+          - ncdu
+      # htop (:4.2)
+      - shell_command:
+          - tip! scratch:4.1 '🧪 htop' && cds
+          - htop
+
+  # Blepserve (:5)
+  - window_name: 📠 Blepserve
+    focus: false
+    panes:
+      - focus: true
+        shell_command:
+          - tip! scratch:5.1 '📠 Blepserve' && cds
+          - ssh alex@blepserve.local

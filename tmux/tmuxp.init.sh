@@ -4,7 +4,7 @@ export DISABLE_AUTO_TITLE="true"
 export PATH=/opt/homebrew/bin:$PATH
 
 # Make alias paths avaliable
-source ~/.zshrc.aliases.zsh
+source $HOME/.zshrc.aliases.zsh > /dev/null 2>&1
 
 if [ -z "$TMUX" ]; then
     if ! /opt/homebrew/bin/tmux has-session -t scratch 2>/dev/null; then

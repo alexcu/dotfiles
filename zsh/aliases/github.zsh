@@ -65,7 +65,7 @@ function ghprc() {
     # Add Jira ID prefix if gbnj function exists and returns a value
     if command -v gbnj >/dev/null 2>&1; then
         jira_id=$(gbnj "$branch_name")
-        if [[ -n "$jira_id" ]]; then
+        if [[ -n "$jira_id" && ! "$title" =~ ^\[[A-Z]+-[0-9]+\] ]]; then
             title="[$jira_id] $title"
         fi
     fi
@@ -203,6 +203,75 @@ function ghprdrm() {
         return 1
     fi
     return 1
+}
+
+# GitHub PR Close (optionally posting a closing comment)
+#   ghprcl [pr] [-c|--comment <text>] [-F|--comment-file <file>]
+function ghprcl() {
+    local pr=""
+    local body=""
+    local body_file=""
+
+    while (( $# > 0 )); do
+        case "$1" in
+            -c|--comment)
+                body="$2"
+                shift 2
+                ;;
+            -F|--comment-file)
+                body_file="$2"
+                shift 2
+                ;;
+            *)
+                pr="$1"
+                shift
+                ;;
+        esac
+    done
+
+    # gh pr close needs an explicit target (it does not default to current branch)
+    pr="${pr:-$(gbn)}"
+    if [[ -z "$pr" ]]; then
+        echo "ghprcl: not on a git branch and no PR given" >&2
+        return 1
+    fi
+
+    local pr_json
+    pr_json="$(gh pr view "$pr" --json state,assignees 2>/dev/null)"
+    if [[ -z "$pr_json" ]]; then
+        echo "🚫⏭️  No PR found for ${pr}; skipping"
+        return 0
+    fi
+
+    local state
+    state="$(echo "$pr_json" | jq -r '.state')"
+    if [[ "$state" == "MERGED" || "$state" == "CLOSED" ]]; then
+        echo "🚫⏭️  PR ${pr} is already ${state:l}; skipping"
+        return 0
+    fi
+
+    if [[ -n "$body_file" ]]; then
+        body="$(cat "$body_file")"
+    fi
+
+    local -a comment_args
+    comment_args=()
+    if [[ -n "$body" ]]; then
+        comment_args=(--comment "$body")
+    fi
+
+    if echo "$pr_json" | jq -e --arg me "$USER" 'any(.assignees[]?; .login == $me)' >/dev/null 2>&1; then
+        echo "👤➖ Unassigning you from ${pr}..."
+        gh pr edit --remove-assignee @me "$pr" >/dev/null
+    fi
+
+    echo "🚫 Closing PR ${pr}..."
+    if gh pr close "$pr" "${comment_args[@]}"; then
+        echo "🚫✅ Closed PR ${pr}"
+    else
+        echo "🚫❌ Failed to close PR ${pr}" >&2
+        return 1
+    fi
 }
 
 # GitHub PR Reviewers

@@ -95,3 +95,5 @@ wrap_last_word_in_subshell() {
 }
 zle -N wrap_last_word_in_subshell
 bindkey '^[ ' wrap_last_word_in_subshell
+
+export CLAUDE_CODE_MAX_OUTPUT_TOKENS=128000

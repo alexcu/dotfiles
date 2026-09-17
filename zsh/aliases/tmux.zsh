@@ -4,11 +4,8 @@
 # Tmux aliases
 #
 
-# Tmux Init Pane
-alias tip="$HOME/.tmux.pane.init"
-
 # Tmux Init Pane (and clear)
-function tip!() { tip "$@" && clear }
+function tip!() { $HOME/.tmux.pane.init "$@" && clear }
 
 # Tmux get Pane IDentifier
 alias tpid="tmux display -p '#S:#I.#P'"

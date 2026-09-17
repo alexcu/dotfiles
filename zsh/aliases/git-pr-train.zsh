@@ -35,7 +35,46 @@ function gprtc() {
 }
 
 # Git PR Train (main function)
+# - `gprt [args]`            → standard `git pr-train` passthrough
+# - `gprt -- <cmd> [&& ...]` → run <cmd> on every branch in the train (quote the chain),
+#                             showing the progress board by default (pass --no-progress to opt out)
+#   Extra options (before `--`):
+#     --on <id>              → target the whole train containing <id> (PR#, branch, URL, or DLE-123)
+#     --from-branch [branch] → start from a branch; omit branch to fzf-pick (resume)
+#     --merge-forward        → after each success, merge the branch into the next (gmbn)
 function gprt() {
+    local arg
+    local has_sep=false
+    for arg in "$@"; do
+        if [[ "$arg" == "--" ]]; then
+            has_sep=true
+            break
+        fi
+    done
+
+    if [[ "$has_sep" == true ]]; then
+        local show_progress=true
+        local -a passthru
+        passthru=()
+        for arg in "$@"; do
+            case "$arg" in
+                --no-progress)
+                    show_progress=false
+                    ;;
+                *)
+                    passthru+=("$arg")
+                    ;;
+            esac
+        done
+
+        if [[ "$show_progress" == true ]]; then
+            _gprtllfn --show-progress "${passthru[@]}"
+        else
+            _gprtllfn "${passthru[@]}"
+        fi
+        return $?
+    fi
+
     local tmpfile=$(mktemp)
     script -q "$tmpfile" git pr-train "$@"
     local ret=$?
@@ -48,9 +87,30 @@ function gprt() {
 }
 
 # Git PR Train Test all branches
-function gprtt() {
+function gprT() {
     _gprtllfn "$@" ghprt
     notify 'Tests Submitted for PRs' 'Git PR Train' '🚂 ✅' 'Glass' || notify 'PR Testing Failed' 'Git PR Train' '🚂 ❌' 'Basso'
+}
+alias gprtt=gprT
+
+# Git PR Train Test selected branches
+function gprTT() {
+    local selected_branches
+    selected_branches=$(gprtll | fzf --prompt "🚂 Select branches to test: " --cycle --multi)
+
+    if [[ -z "$selected_branches" ]]; then
+        echo "No branches selected"
+        return 0
+    fi
+
+    echo "$selected_branches" | while read -r branch; do
+        if [[ -n "$branch" ]]; then
+            cecho cyan "🧪 Testing branch: $branch"
+            ghprt "$branch"
+        fi
+    done
+
+    notify 'Tests Submitted for Selected PRs' 'Git PR Train' '🚂 ✅' 'Glass' || notify 'PR Testing Failed' 'Git PR Train' '🚂 ❌' 'Basso'
 }
 
 # Git PR Train update approval titles
@@ -100,17 +160,48 @@ function _gprtp_update_approval_title() {
     fi
 }
 
+function _gprtp_test_if_not_approved() {
+    local branch="$1"
+
+    local pr_info
+    pr_info="$(
+        gh pr view "$branch" --json reviewDecision,isDraft \
+            -q '[((.reviewDecision // "")), (.isDraft | tostring)] | @tsv'
+    )" || return 1
+
+    local review_decision is_draft_str
+    review_decision="${pr_info%%$'\t'*}"
+    is_draft_str="${pr_info#*$'\t'}"
+
+    if [[ "$is_draft_str" != "true" && "$review_decision" == "APPROVED" ]]; then
+        cecho green "  -> already approved; skipping tests"
+        return 0
+    fi
+
+    ghprt "$branch"
+}
+
 function _gprtp_assign_if_not_approved() {
-    local branch=$1
+    local branch="$1"
     shift
 
     local pr_info
-    pr_info=$(ASSIGNEE_LOGIN="$USER" gh pr view "$branch" --json reviewDecision,isDraft,assignees \
-        -q '[.reviewDecision // "", (.isDraft | tostring), (([.assignees[].login] | index(env.ASSIGNEE_LOGIN)) != null | tostring)] | @tsv') || return 1
+    pr_info="$(
+        ASSIGNEE_LOGIN="$USER" gh pr list --head "$branch" --state open \
+            --json number,reviewDecision,isDraft,assignees \
+            -q 'if length == 0 then "" else [ (.[0].number | tostring), (.[0].reviewDecision // ""), (.[0].isDraft | tostring), (([.[0].assignees[].login] | index(env.ASSIGNEE_LOGIN)) != null | tostring) ] | @tsv end'
+    )" || return 1
 
-    local review_decision is_draft_str is_assigned_str
-    review_decision="${pr_info%%$'\t'*}"
+    if [[ -z "$pr_info" ]]; then
+        cecho yellow "  -> no open PR found; skipping"
+        return 0
+    fi
+
+    local pr_number review_decision is_draft_str is_assigned_str
+    pr_number="${pr_info%%$'\t'*}"
     local rest="${pr_info#*$'\t'}"
+    review_decision="${rest%%$'\t'*}"
+    rest="${rest#*$'\t'}"
     is_draft_str="${rest%%$'\t'*}"
     is_assigned_str="${rest#*$'\t'}"
 
@@ -124,13 +215,14 @@ function _gprtp_assign_if_not_approved() {
         return 0
     fi
 
-    ghpra "$branch" "$@"
+    ghpra "$pr_number" "$@"
 }
 
 # Git PR Train push and create/update PRs
 function gprtp() {
     local send_notify="yes"
     local update_title="yes"
+    local run_tests="no"
     local combined_title=""
 
     local -a positional_args
@@ -148,6 +240,10 @@ function gprtp() {
                 ;;
             --no-update-title)
                 update_title="no"
+                shift
+                ;;
+            --run-tests)
+                run_tests="yes"
                 shift
                 ;;
             --check-approved)
@@ -170,7 +266,7 @@ function gprtp() {
     done
 
     if (( ${#positional_args[@]} > 1 )); then
-        echo "usage: gprtp [--notify|--no-notify] [--no-update-title] [combined_pr_title]" >&2
+        echo "usage: gprtp [--notify|--no-notify] [--no-update-title] [--run-tests] [combined_pr_title]" >&2
         return 1
     fi
 
@@ -182,17 +278,28 @@ function gprtp() {
         if [[ -n "$jira_id" ]]; then
             combined_title="[$jira_id] Combined branch"
         else
-            combined_title="$(git pr-train --list | awk '{print $1}' | paste -sd " " -)"
+            combined_title="[$(git symbolic-ref --short HEAD 2>/dev/null)] Combined branch"
         fi
     fi
 
     cecho cyan "🏗️ 🚂 Pushing and creating/updating PRs..."
-    printf "%s\ny\n" "$combined_title" | git pr-train --push --create-prs --draft
-    local push_exit=$?
+    cecho cyan dim "Combined PR title: $combined_title"
+    COMBINED_TITLE="$combined_title" expect -c '
+        set timeout -1
+        spawn git pr-train --create-prs --draft
+        expect "Combined branch PR title:"
+        send "$env(COMBINED_TITLE)\r"
+        expect "Shall we do this?"
+        send "y\r"
+        expect eof
+        lassign [wait] pid spawnid os_error exit_code
+        exit $exit_code
+    '
+    local create_pr_exit=$?
     echo
 
-    if (( push_exit != 0 )); then
-        return $push_exit
+    if (( create_pr_exit != 0 )); then
+        return $create_pr_exit
     fi
 
     echo
@@ -204,6 +311,17 @@ function gprtp() {
     local overall_exit=$assign_exit
     if (( overall_exit == 0 )); then
         overall_exit=$approval_exit
+    fi
+
+    if [[ "$run_tests" == "yes" ]]; then
+        echo
+        cecho cyan "🧪 🚂 Running tests on unapproved PRs..."
+        creset
+        _gprtllfn _gprtp_test_if_not_approved
+        local test_exit=$?
+        if (( overall_exit == 0 )); then
+            overall_exit=$test_exit
+        fi
     fi
 
     if [[ "$send_notify" == "yes" ]]; then
@@ -232,24 +350,29 @@ function gprtll() {
     }
 
     local train_key
-    train_key="$(
-        BRANCH="$branch" yq e -r '
-          .trains
-          | to_entries[]
-          | select(
-              .value[]
-              | (
-                  (type == "!!str" and . == strenv(BRANCH))
-                  or (type == "!!map" and has(strenv(BRANCH)))
+    if ARG="$branch" yq e -e '.trains | has(strenv(ARG))' "$config_file" >/dev/null 2>&1; then
+        # The argument names a train directly.
+        train_key="$branch"
+    else
+        train_key="$(
+            BRANCH="$branch" yq e -r '
+              .trains
+              | to_entries[]
+              | select(
+                  .value[]
+                  | (
+                      (type == "!!str" and . == strenv(BRANCH))
+                      or (type == "!!map" and has(strenv(BRANCH)))
+                    )
                 )
-            )
-          | .key
-        ' "$config_file" \
-        | head -n 1
-    )"
+              | .key
+            ' "$config_file" \
+            | head -n 1
+        )"
+    fi
 
     if [[ -z "$train_key" || "$train_key" == "null" ]]; then
-        cecho red bold "❌ branch '$branch' not found in ${PR_TRAIN_FILENAME}; aborting." >&2
+        cecho red bold "❌ '$branch' not found in ${PR_TRAIN_FILENAME} (as a branch or train); aborting." >&2
         return 1
     fi
 
@@ -259,23 +382,111 @@ function gprtll() {
     ' "$config_file"
 }
 
+# Resolve a PR identifier to a branch name.
+# Accepts: PR number (123 / #123), PR URL (.../pull/123), Jira ID (DLE-123 → local
+# branch matching *DLE-123*), or a plain branch name (passed through).
+function _gprt_resolve_branch() {
+    local id="$1"
+    [[ -z "$id" ]] && return 1
+
+    if [[ "$id" == *"/pull/"* ]]; then
+        id="${id##*/pull/}"
+        id="${id%%/*}"
+        id="${id%%\?*}"
+    fi
+
+    local pr_num="${id#\#}"
+    if [[ "$pr_num" =~ ^[0-9]+$ ]]; then
+        gh pr view "$pr_num" --json headRefName -q '.headRefName' 2>/dev/null
+        return $?
+    fi
+
+    # An exact train key wins over branch matching; gprtll resolves it directly.
+    local cfg
+    cfg="$(_find_pr_train_config_file 2>/dev/null)"
+    if [[ -n "$cfg" ]] && ID="$id" yq e -e '.trains | has(strenv(ID))' "$cfg" >/dev/null 2>&1; then
+        echo "$id"
+        return 0
+    fi
+
+    if [[ "$id" =~ ^[A-Z]+-[0-9]+$ ]]; then
+        local -a matches
+        matches=("${(@f)$(git branch --list "*${id}*" --format '%(refname:short)')}")
+        matches=(${matches[@]:#})       # drop empty elements
+        matches=(${matches[@]:#z/*})    # drop archived (z/-prefixed) branches
+        if (( ${#matches[@]} == 0 )); then
+            echo "_gprt_resolve_branch: no local branch matches '$id'" >&2
+            return 1
+        fi
+        if (( ${#matches[@]} == 1 )); then
+            echo "${matches[1]}"
+            return 0
+        fi
+
+        # Multiple matches: if they all belong to the same train, any one identifies
+        # it, so skip the picker. Only prompt when matches span different trains.
+        local first_train other_train
+        local all_same=true
+        first_train="$(gprtll "${matches[1]}" 2>/dev/null)"
+        local candidate
+        for candidate in "${matches[@]:1}"; do
+            other_train="$(gprtll "$candidate" 2>/dev/null)"
+            if [[ "$other_train" != "$first_train" ]]; then
+                all_same=false
+                break
+            fi
+        done
+        if [[ "$all_same" == true ]]; then
+            echo "${matches[1]}"
+            return 0
+        fi
+
+        printf '%s\n' "${matches[@]}" | fzf --prompt "🚂 Branch for ${id}: " --cycle
+        return $?
+    fi
+
+    echo "$id"
+}
+
 # Git PR Train list branches function
 function _gprtllfn() {
     local start_branch=""
+    local train_branch=""
     local from_branch_requested=false
     local show_progress=false
+    local merge_forward=false
 
     while (( $# > 0 )); do
         case "$1" in
+            --on)
+                if [[ -z "$2" || "$2" == "--" || "$2" == -* ]]; then
+                    echo "_gprtllfn: --on requires an identifier (PR#, branch, URL, or Jira ID)" >&2
+                    return 1
+                fi
+                train_branch="$(_gprt_resolve_branch "$2")" || return 1
+                if [[ -z "$train_branch" ]]; then
+                    echo "_gprtllfn: could not resolve '$2' to a branch" >&2
+                    return 1
+                fi
+                shift 2
+                ;;
             --from-branch|--after-branch|--start-at)
                 from_branch_requested=true
                 if [[ -n "$2" && "$2" != "--" && "$2" != -* ]]; then
                     start_branch="$2"
                     shift 2
                 else
-                    start_branch="$(gbn)"
+                    start_branch="$(gprtll | fzf --prompt '🚂 Run from branch: ' --cycle)"
+                    if [[ -z "$start_branch" ]]; then
+                        echo "_gprtllfn: no start branch selected; aborting" >&2
+                        return 1
+                    fi
                     shift
                 fi
+                ;;
+            --merge-forward|--cascade)
+                merge_forward=true
+                shift
                 ;;
             --show-progress)
                 show_progress=true
@@ -288,8 +499,8 @@ function _gprtllfn() {
     done
 
     if (( $# < 1 )); then
-        echo "usage: _gprtllfn [--from-branch [branch]] [--show-progress] <function> [extra args...]" >&2
-        echo "       _gprtllfn [--from-branch [branch]] [--show-progress] -- <command> [&& more commands...]" >&2
+        echo "usage: _gprtllfn [--on <id>] [--from-branch [branch]] [--merge-forward] [--show-progress] <function> [extra args...]" >&2
+        echo "       _gprtllfn [--on <id>] [--from-branch [branch]] [--merge-forward] [--show-progress] -- <command> [&& more commands...]" >&2
         return 1
     fi
 
@@ -303,8 +514,9 @@ function _gprtllfn() {
     shift
 
     local all_branches_output
-    if [[ -n "$start_branch" ]]; then
-        all_branches_output="$(gprtll "$start_branch")" || return 1
+    local lookup_branch="${start_branch:-$train_branch}"
+    if [[ -n "$lookup_branch" ]]; then
+        all_branches_output="$(gprtll "$lookup_branch")" || return 1
     else
         all_branches_output="$(gprtll)" || return 1
     fi
@@ -360,6 +572,7 @@ function _gprtllfn() {
 
     local branch_index=$start_offset
     local branch
+    local prev_branch=""
 
     _gprtllfn_print_progress() {
         local current_index=$1
@@ -430,6 +643,18 @@ function _gprtllfn() {
                 return 1
             fi
 
+            if [[ "$merge_forward" == true && -n "$prev_branch" ]]; then
+                cecho cyan "🔀 Merging $prev_branch → $branch"
+                if ! git merge --no-edit "$prev_branch"; then
+                    status_by_index[$((branch_index + 1))]="fail"
+                    if [[ "$show_progress" == true ]]; then
+                        _gprtllfn_print_progress "$branch_index"
+                    fi
+                    cecho red bold "❌ merge of '$prev_branch' into '$branch' failed; resolve conflicts then resume with --from-branch; aborting." >&2
+                    return 1
+                fi
+            fi
+
             setopt local_options pipefail
             eval "$fn $@"
             local cmd_exit=$?
@@ -457,6 +682,7 @@ function _gprtllfn() {
             status_by_index[$((branch_index + 1))]="ok"
         fi
 
+        prev_branch="$branch"
         (( branch_index++ ))
     done
 
@@ -464,7 +690,6 @@ function _gprtllfn() {
         _gprtllfn_print_progress $((max_index + 1))
     fi
 }
-
 # Select and cycle through branches in PR train
 function gprtls() {
     gprtll | fzf --prompt "🚂 Select PR Train branch: " --cycle | xargs echo | tr '\n' ' '
@@ -476,13 +701,34 @@ function gprtl() {
 }
 
 # Git PR Train push branch
-function gprtpp() {
+function gprtP() {
     gprtll | fzf --prompt "🚂 Push PR Train branch(s): " --cycle --multi | xargs git push origin
 }
+alias gprtpp=gprtP
 
 # Git PR Train push all branches without running all git pr-train fluff
-function gprtppa() {
-    _gprtllfn git push origin
+function gprtPP() {
+    cecho "🚂 Pushing all PR train branches..."
+    gprtll | xargs git push origin
+}
+alias gprtppa=gprtPP
+
+# Git PR Train Close: author a closing comment once, then comment + close every open
+# PR in the train. Forwards options to gprt (e.g. gprtclose --on DLE-174).
+function gprtcl() {
+    local f
+    f=$(mktemp)
+    ${EDITOR:-emacs} "$f"
+    if [[ ! -s "$f" ]]; then
+        echo "gprtclose: empty comment; aborting" >&2
+        rm -f "$f"
+        return 1
+    fi
+
+    gprt "$@" -- "ghprcl -F '$f' || true"
+    local ret=$?
+    rm -f "$f"
+    return $ret
 }
 
 # Git PR Train (whole workflow)
