@@ -126,6 +126,7 @@ function retry() {
   done
 }
 alias rt="retry"
+alias doit="retry"
 
 # Architecture Changes
 alias m1='arch -arm64'
@@ -147,21 +148,124 @@ alias dba="defaultbrowser browser" # Arc
 
 # Watch
 alias w="watch"
-alias doit="watch -n 1 --"
-
-# Claude (non-npm)
-alias claude="$HOME/.claude/local/claude"
 
 # Confirm before quitting ncdu always
 alias ncdu="ncdu --confirm-quit"
 
-
-# Keep clamshell mode alive.
+# Keep the Mac awake with the lid shut: clamshell [on] [-a] [-f] [seconds] | off | status
 function clamshell() {
+    case "$1" in
+        off) unclamshell; return ;;
+        status) clamshellstatus; return ;;
+        on) shift ;;
+    esac
+    if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+        echo "Usage: clamshell [on] [-a|--attached] [-f|--force] [seconds]"
+        echo "       clamshell off"
+        echo "       clamshell status"
+        echo "Keep the Mac awake with the lid shut, detached from this terminal by default."
+        echo "  -a: run attached in this terminal instead (Ctrl-C to stop)"
+        echo "  -f: allow on battery"
+        echo "  seconds: auto-stop after seconds"
+        return 0
+    fi
+    local attached=""
+    if [[ "$1" == "-a" || "$1" == "--attached" ]]; then
+        attached=1
+        shift
+    elif [[ "$1" == "-d" || "$1" == "--detached" ]]; then
+        shift
+    fi
+    if [[ -n "$attached" ]]; then
+        clamshell-attached "$@"
+    else
+        clamshelld "$@"
+    fi
+}
+
+# Ensure shutting the lid sleeps the Mac again, winding down any running clamshell.
+function unclamshell() {
+    if ! pmset -g | grep -qE "SleepDisabled[[:space:]]+1"; then
+        cecho green "😴 Sleep already enabled: shutting the lid sleeps the Mac"
+        return 0
+    fi
+    sudo pmset -a disablesleep 0 || return 1
+    cecho green "😴 Sleep restored: shutting the lid sleeps the Mac"
+    if pgrep -qf "clamshell-watchdog [0-9]"; then
+        cecho white dim "   clamshell watchdog will wind down within a few seconds"
+    fi
+}
+
+# Run clamshell-attached detached from this terminal; stop it with clamshell off.
+function clamshelld() {
+    if pmset -g | grep -qE "SleepDisabled[[:space:]]+1"; then
+        cecho yellow "🐚 Clamshell is already on; run clamshell off first"
+        return 1
+    fi
+    local log="${TMPDIR:-/tmp}/clamshell.log"
+    # Runs in a fresh root zsh: the watchdog then tracks this job rather than the
+    # interactive shell, and clamshell-attached's later sudo calls can't block on a
+    # password prompt nobody sees.
+    sudo -b zsh -c "trap '' HUP; $(functions clamshell-attached); clamshell-attached \"\$@\"" \
+        clamshelld "$@" </dev/null >"$log" 2>&1 || return 1
+    sleep 2
+    if ! pmset -g | grep -qE "SleepDisabled[[:space:]]+1"; then
+        cecho red bold "❌ Clamshell failed to start:"
+        sed 's/^/   /' "$log"
+        return 1
+    fi
+    cecho green "🐚 Clamshell running detached (log: $log)"
+    cecho white dim "   clamshell off to stop, clamshell status to check"
+}
+
+# Status of clamshell mode: lid behaviour, power, lid state and clamshell processes.
+function clamshellstatus() {
+    if pmset -g | grep -qE "SleepDisabled[[:space:]]+1"; then
+        cecho yellow bold "🐚 Clamshell ON: shutting the lid keeps the Mac awake"
+    else
+        cecho green "😴 Clamshell OFF: shutting the lid sleeps the Mac"
+    fi
+
+    local batt="$(pmset -g batt)"
+    local pct="$(grep -oE '[0-9]+%' <<<"$batt" | head -n 1)"
+    # cecho prints via print -P, where a bare % starts a prompt escape
+    pct="${pct//\%/%%}"
+    if grep -q "AC Power" <<<"$batt"; then
+        cecho white "🔌 Power: AC${pct:+ ($pct)}"
+    else
+        cecho white "🔋 Power: battery${pct:+ ($pct)}"
+    fi
+
+    if ioreg -r -k AppleClamshellState -d 1 | grep -q "AppleClamshellState. = Yes"; then
+        cecho white "💻 Lid: closed"
+    else
+        cecho white "💻 Lid: open"
+    fi
+
+    local watchdog="$(pgrep -of 'clamshell-watchdog [0-9]')"
+    if [[ -n "$watchdog" ]]; then
+        local since="$(ps -o etime= -p "$watchdog" | tr -d ' ')"
+        local limit="$(ps -ww -o args= -p "$watchdog" \
+            | sed -nE 's/.*clamshell-watchdog [0-9]+ ([0-9]+).*/\1/p')"
+        cecho white "🐕 Watchdog: running for ${since}${limit:+, stops after ${limit}s}"
+    else
+        cecho white dim "🐕 Watchdog: not running"
+    fi
+
+    local caffeinate_pids="$(pgrep -x caffeinate | paste -sd ' ' -)"
+    if [[ -n "$caffeinate_pids" ]]; then
+        cecho white "☕ caffeinate: running (pid $caffeinate_pids)"
+    else
+        cecho white dim "☕ caffeinate: not running"
+    fi
+}
+
+# Keep clamshell mode alive in this terminal (clamshell -a runs this; clamshelld runs it detached).
+function clamshell-attached() {
     local force=""
     if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-        echo "Usage: clamshell [-f] [seconds]"
-        echo "Keep the system awake, even with the lid shut."
+        echo "Usage: clamshell-attached [-f] [seconds]"
+        echo "Keep the system awake, even with the lid shut (Ctrl-C to stop)."
         echo "The display still sleeps on its timer and blanks on lid close."
         echo "  -f: allow on battery"
         echo "  seconds: auto-stop after seconds"

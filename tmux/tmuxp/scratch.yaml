@@ -2,64 +2,66 @@ session_name: scratch
 start_directory: '${HOME}'
 global_options:
   automatic-rename: off
+options:
+  base-index: 0
 
 windows:
-  # Home (:1)
+  # Home (:0)
   - window_name: 🏠 Home
     focus: true
-    layout: main-horizontal
     options:
-      main-pane-height: 50%
+      "@start_directory": ${HOME}
     environment:
       START_DIR: ${HOME}
     panes:
-      # Home (:1.1)
+      # Home (:0.1)
       - focus: true
         shell_command:
-          - tip! scratch:1.1 '🏠 Home' && cds
-      # Desktop (:1.2)
-      - environment:
-          START_DIR: ${HOME_DESKTOP}
-        shell_command:
-          - tip! scratch:1.2 '📂 Desktop' && cds
+          - tip! scratch:0.1 '🏠 Home' && cds
 
+  - window_name: 🪄 Prompts
+    focus: false
+    options:
+      "@start_directory": ${HOME_REPOS}/personal/prompts
+    environment:
+      START_DIR: ${HOME_REPOS}/personal/prompts
+    panes:
+      - focus: true
+        shell_command:
+          - tip! scratch:1.1 '🪄 Prompts' && cds
 
   # Repos (:2)
   - window_name: 📦 Repos
     focus: false
-    layout: main-horizontal
     options:
-      main-pane-height: 50%
-    panes:
-    # lebensmittel (:2.1)
-    - focus: true
-      environment:
-        START_DIR: ${HOME_REPOS}
-      shell_command:
-        - tip! scratch:2.1 '🛒 Repos' && cds
-    # flightscan (:2.2)
-    - environment:
-        START_DIR: ${HOME_REPOS}/personal/flightscan
-      shell_command:
-        - tip! scratch:2.2 '✈️ flightscan' && cds
-
-  # Claude (:3)
-  - window_name: 🤖 Claude
-    focus: false
+      "@start_directory": ${HOME_REPOS}/personal
     environment:
       START_DIR: ${HOME_REPOS}/personal
     panes:
       - focus: true
         shell_command:
-          - tip! scratch:3.1 '🤖 Claude' && cds
-          - claude
+          - tip! scratch:2.1 '📦 Repos' && cds
+
+  - window_name: 🛫 Flightscan
+    focus: false
+    options:
+      "@start_directory": ${HOME_REPOS}/personal/flightscan
+    environment:
+      START_DIR: ${HOME_REPOS}/personal/flightscan
+    panes:
+      - focus: true
+        shell_command:
+          - tip! scratch:3.1 '🛫 Flightscan' && cds
+          - cmd: ./bin/start
+            enter: false
 
   # Utils (:4)
-  - window_name: 🚀 Utils
+  - window_name: 🧰 Utils
     focus: false
     layout: main-horizontal
     options:
       main-pane-height: 75%
+      "@start_directory": ${HOME}
     panes:
       # ncdu (:4.1)
       - focus: true
@@ -71,11 +73,13 @@ windows:
           - tip! scratch:4.1 '🧪 htop' && cds
           - htop
 
-  # Blepserve (:5)
-  - window_name: 📠 Blepserve
+  # Hipposerve (:5)
+  - window_name: 🦛 Hipposerve
     focus: false
+    options:
+      "@start_directory": ${HOME}
     panes:
       - focus: true
         shell_command:
-          - tip! scratch:5.1 '📠 Blepserve' && cds
-          - ssh alex@blepserve.local
+          - tip! scratch:5.1 '🦛 Hipposerve' && cds
+          - ssh hipposerve

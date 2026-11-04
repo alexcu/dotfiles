@@ -85,7 +85,7 @@ fi
 # Enable unlimited file descriptors
 ulimit -n 65535
 
-# Allow for Alt-Space to trigger wrap of last word in a subshell
+# Allow for Ctrl-Space to trigger wrap of last word in a subshell
 # makes things like `git checkout $(gbn)` work a lot nicer
 wrap_last_word_in_subshell() {
   zle backward-word
@@ -94,6 +94,6 @@ wrap_last_word_in_subshell() {
   LBUFFER+="\$(${word})"
 }
 zle -N wrap_last_word_in_subshell
-bindkey '^[ ' wrap_last_word_in_subshell
+bindkey '^@' wrap_last_word_in_subshell
 
 export CLAUDE_CODE_MAX_OUTPUT_TOKENS=128000

@@ -1,0 +1,29 @@
+session_name: agents
+start_directory: '${HOME}'
+global_options:
+  automatic-rename: off
+options:
+  base-index: 0
+
+windows:
+  - window_name: codex
+    focus: true
+    options:
+      "@start_directory": ${HOME}
+    panes:
+      - shell_command:
+          - codex agents
+
+  - window_name: claude
+    options:
+      "@start_directory": ${HOME}
+    panes:
+      - shell_command:
+          - claude
+
+  - window_name: cursor
+    options:
+      "@start_directory": ${HOME}
+    panes:
+      - shell_command:
+          - cursor-agent

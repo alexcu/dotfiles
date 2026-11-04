@@ -12,9 +12,13 @@ if [ -z "$TMUX" ]; then
     fi
 
     if [ -f ~/.tmuxp.work/work.yaml ]; then
-        if ! /opt/homebrew/bin/tmux has-session -t work 2>/dev/null; then
+        if ! /opt/homebrew/bin/tmux has-session -t canva 2>/dev/null; then
             /opt/homebrew/bin/tmuxp load -d ~/.tmuxp.work/work.yaml
         fi
+    fi
+
+    if ! /opt/homebrew/bin/tmux has-session -t agents 2>/dev/null; then
+        /opt/homebrew/bin/tmuxp load -d ~/.tmuxp/agents.yaml
     fi
 
     /opt/homebrew/bin/tmux attach -t scratch
